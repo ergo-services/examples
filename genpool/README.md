@@ -1,7 +1,6 @@
 ## Pool demo scenario ##
 
-It starts a Pool process with the name "mypool". This process spawns 5 worker processes which are handling messages/requests forwarded by the "mypool" process.
-There also "myping" process - it sends messages and makes a call requests to the "mypool" process.
+It starts a Pool process with the name "mypool". This process spawns 5 worker processes that handle messages/requests forwarded by the "mypool" process. There is also "myping" process - it sends messages and makes call requests to the "mypool" process.
 
 Here is output of this example
 ```
