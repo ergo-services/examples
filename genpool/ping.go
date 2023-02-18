@@ -30,13 +30,13 @@ func (p *MyPing) HandleCast(process *gen.ServerProcess, message etf.Term) gen.Se
 		// schedule sending cast message
 		process.CastAfter(process.Self(), messageCast{}, time.Second)
 	case messageCast:
-		fmt.Println("MyPing cast message 'Hello World'")
+		fmt.Println("MyPing send cast message 'Hello World'")
 		process.Cast(poolProcessName, "Hello World")
 
 		// schedule making a call request
 		process.CastAfter(process.Self(), messageCall{}, time.Second)
 	case messageCall:
-		fmt.Println("MyPing make call request 'ping'")
+		fmt.Println("MyPing make a call request 'ping'")
 		result, err := process.Call(poolProcessName, "ping")
 		if err != nil {
 			panic(err)
