@@ -16,9 +16,9 @@ OK
 Starting myping process ...OK
 MyPing send message 'Hello World'
 [<AAF60CDC.0.1013>] received Info message: Hello World
-MyPing cast message 'Hello World'
+MyPing send cast message 'Hello World'
 [<AAF60CDC.0.1014>] received Cast message: Hello World
-MyPing make call request 'ping'
+MyPing make a call request 'ping'
 [<AAF60CDC.0.1015>] received Call request: ping
 MyPing send message 'Hello World'
 [<AAF60CDC.0.1016>] received Info message: Hello World
