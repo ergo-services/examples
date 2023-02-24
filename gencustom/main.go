@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"time"
 
@@ -32,6 +33,8 @@ func (md *MyCustom) HandleCustomDirect(process *CustomProcess, message interface
 }
 
 func main() {
+
+	flag.Parse()
 
 	// Initialize new node with given name, cookie, listening port range and epmd port
 	node, e := ergo.StartNode("mydemo@127.0.0.1", "cookie", node.Options{})

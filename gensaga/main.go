@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 )
 
 func main() {
+	flag.Parse()
+
 	fmt.Printf("Starting node: node1@localhost and Saga1 process...")
 	node1, err := ergo.StartNode("node1@localhost", "cookies", node.Options{})
 	if err != nil {
