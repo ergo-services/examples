@@ -2,6 +2,8 @@
 
 It starts a Pool process with the name "mypool". This process spawns 5 worker processes that handle messages/requests forwarded by the "mypool" process. There is also "myping" process - it sends messages and makes call requests to the "mypool" process.
 
+![image](https://user-images.githubusercontent.com/118860/221194341-628939e0-7be2-41bf-9f54-5374ac802a69.png)
+
 Here is output of this example
 ```
 ❯❯❯❯ go run .
