@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 )
 
 func main() {
+	flag.Parse()
 
 	fmt.Println("")
 	fmt.Println("to stop press Ctrl-C or wait 10 seconds...")
