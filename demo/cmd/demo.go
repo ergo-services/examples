@@ -1,10 +1,9 @@
 package main
 
 import (
-	"flag"
-	//"demo"
-
 	"demo/apps/myapp"
+	"flag"
+	"time"
 
 	"ergo.services/application/observer"
 
@@ -24,7 +23,6 @@ var (
 func init() {
 	flag.StringVar(&OptionNodeName, "name", "demo@localhost", "node name")
 	flag.StringVar(&OptionNodeCookie, "cookie", lib.RandomString(16), "a secret cookie for the network messaging")
-
 }
 
 func main() {
@@ -47,14 +45,14 @@ func main() {
 	options.Log.DefaultLogger.Disable = true
 
 	// add logger "colored".
-	loggercolored, err := colored.CreateLogger(colored.Options{})
+	loggercolored, err := colored.CreateLogger(colored.Options{TimeFormat: time.DateTime})
 	if err != nil {
 		panic(err)
 	}
 	options.Log.Loggers = append(options.Log.Loggers, gen.Logger{Name: "colored", Logger: loggercolored})
 
 	// add logger "rotate".
-	loggerrotate, err := rotate.CreateLogger(rotate.Options{})
+	loggerrotate, err := rotate.CreateLogger(rotate.Options{TimeFormat: time.DateTime})
 	if err != nil {
 		panic(err)
 	}
