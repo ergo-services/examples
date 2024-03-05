@@ -15,3 +15,6 @@ This is an "umbrella"-example that demonstrates most of the Ergo Framework featu
 ## call
 
 This example project shows how to make synchronous requests to the local and remote processes. It starts two nodes (`node1@localhost` and `node2@localhost`); `node1` spawns processes `a` and `b`; `node2` spawns process `b`. Process `a` is making `Call` requests sequentially to the process `b` on `node1@localhost` (locally) and to the process `b` on `node2@localhost` (remotely)
+
+![image](https://github.com/ergo-services/examples/assets/118860/430b42e2-5c5e-4302-8abf-9f20e7e34033)
+
