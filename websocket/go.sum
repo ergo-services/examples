@@ -1,11 +1,11 @@
-ergo.services/application v0.0.0-20240813161537-3a8d1820b3e9 h1:ZuvhQ5Xweok0Tc5T74NS2Pw5tFyEpqrRtAbm93Z/oKw=
-ergo.services/application v0.0.0-20240813161537-3a8d1820b3e9/go.mod h1:KraADNdWcakhFFrKUJkAfsHNIsgSiaXghB7zgTncFLM=
+ergo.services/application v0.0.0-20240902063152-4d985767fe7a h1:dEPzGBLdrwXSodEIc5ZKHYO5V+MynprJwIYNVWEjlfU=
+ergo.services/application v0.0.0-20240902063152-4d985767fe7a/go.mod h1:ptbovhfXF8IhewfbZLM3OIiyYONNkqgRlR4ahx1J0ok=
 ergo.services/ergo v1.999.225-0.20240813065603-2996d01df4fd h1:s0PyAIT+OAtm8casX1kMZFwBzDd2vZV+6dOE2qjpM0Q=
 ergo.services/ergo v1.999.225-0.20240813065603-2996d01df4fd/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
-ergo.services/logger v0.0.0-20240813161240-c5493469faab h1:vurdgbPUW6iOnmFvGEAoxgA7fqHv05BlCN6oZqSdae0=
-ergo.services/logger v0.0.0-20240813161240-c5493469faab/go.mod h1:gpDWjfQm5gwvV2uIPZpOkMUJ9CHyzbX9ohXs5xj9ddg=
-ergo.services/meta v0.0.0-20240813161324-e42873ff3cbd h1:A/YADOYApEHrvumyoYj/p8djPvOCASJmtzApnB+zJNw=
-ergo.services/meta v0.0.0-20240813161324-e42873ff3cbd/go.mod h1:34s+8qfuYJrAprs8wPaHixQckQPi3AoT4/rGDcgQSqM=
+ergo.services/logger v0.0.0-20240902062636-f20f7612a328 h1:WeDBT4Yifph2PU3Bj/EwYHuM034ztZeACPzokkMsfVg=
+ergo.services/logger v0.0.0-20240902062636-f20f7612a328/go.mod h1:gpDWjfQm5gwvV2uIPZpOkMUJ9CHyzbX9ohXs5xj9ddg=
+ergo.services/meta v0.0.0-20240902062833-610538f4992b h1:EwifG3nycB/MgKpAcXmYDC/oYujwudHbNhDAJP5W9Zw=
+ergo.services/meta v0.0.0-20240902062833-610538f4992b/go.mod h1:34s+8qfuYJrAprs8wPaHixQckQPi3AoT4/rGDcgQSqM=
 github.com/fatih/color v1.16.0 h1:zmkK9Ngbjj+K0yRhTVONQh1p/HknKYSlNT+vZCzyokM=
 github.com/fatih/color v1.16.0/go.mod h1:fL2Sau1YI5c0pdGEVCbKQbLXB6edEj1ZgiY4NijnWvE=
 github.com/gorilla/websocket v1.5.0 h1:PPwGk2jz7EePpoHN/+ClbZu8SPxiqlu12wZP/3sWmnc=

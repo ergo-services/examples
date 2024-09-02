@@ -1,7 +1,7 @@
 ergo.services/ergo v1.999.225-0.20240813065603-2996d01df4fd h1:s0PyAIT+OAtm8casX1kMZFwBzDd2vZV+6dOE2qjpM0Q=
 ergo.services/ergo v1.999.225-0.20240813065603-2996d01df4fd/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
-ergo.services/logger v0.0.0-20240813161240-c5493469faab h1:vurdgbPUW6iOnmFvGEAoxgA7fqHv05BlCN6oZqSdae0=
-ergo.services/logger v0.0.0-20240813161240-c5493469faab/go.mod h1:gpDWjfQm5gwvV2uIPZpOkMUJ9CHyzbX9ohXs5xj9ddg=
+ergo.services/logger v0.0.0-20240902062636-f20f7612a328 h1:WeDBT4Yifph2PU3Bj/EwYHuM034ztZeACPzokkMsfVg=
+ergo.services/logger v0.0.0-20240902062636-f20f7612a328/go.mod h1:gpDWjfQm5gwvV2uIPZpOkMUJ9CHyzbX9ohXs5xj9ddg=
 github.com/fatih/color v1.16.0 h1:zmkK9Ngbjj+K0yRhTVONQh1p/HknKYSlNT+vZCzyokM=
 github.com/fatih/color v1.16.0/go.mod h1:fL2Sau1YI5c0pdGEVCbKQbLXB6edEj1ZgiY4NijnWvE=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
