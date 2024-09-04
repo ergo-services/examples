@@ -3,8 +3,8 @@ module demo
 go 1.21.6
 
 require (
-	ergo.services/ergo v1.999.225-0.20240813065603-2996d01df4fd
-	ergo.services/logger v0.0.0-20240902062636-f20f7612a328
+	ergo.services/ergo v1.999.300
+	ergo.services/logger v0.0.0-20240904054830-18407beea628
 )
 
 require (

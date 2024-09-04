@@ -3,10 +3,10 @@ module example
 go 1.20
 
 require (
-	ergo.services/application v0.0.0-20240902063152-4d985767fe7a
-	ergo.services/ergo v1.999.225-0.20240813065603-2996d01df4fd
-	ergo.services/logger v0.0.0-20240902062636-f20f7612a328
-	ergo.services/meta v0.0.0-20240902062833-610538f4992b
+	ergo.services/application v0.0.0-20240904055159-7f2e1a954c05
+	ergo.services/ergo v1.999.300
+	ergo.services/logger v0.0.0-20240904054830-18407beea628
+	ergo.services/meta v0.0.0-20240904054930-a97f6add8a78
 )
 
 require (

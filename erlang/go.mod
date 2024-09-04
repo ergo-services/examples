@@ -3,14 +3,14 @@ module example
 go 1.20
 
 require (
-	ergo.services/application v0.0.0-20240902063152-4d985767fe7a
-	ergo.services/ergo v1.999.225-0.20240813065603-2996d01df4fd
-	ergo.services/logger v0.0.0-20240902062636-f20f7612a328
-	ergo.services/proto v0.0.0-20240902062921-2e96778a3ec8
+	ergo.services/application v0.0.0-20240904055159-7f2e1a954c05
+	ergo.services/ergo v1.999.300
+	ergo.services/logger v0.0.0-20240904054830-18407beea628
+	ergo.services/proto v0.0.0-20240904055016-5e44266a5bf6
 )
 
 require (
-	ergo.services/meta v0.0.0-20240902062833-610538f4992b // indirect
+	ergo.services/meta v0.0.0-20240904054930-a97f6add8a78 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
