@@ -1,12 +1,11 @@
-module example
+module demo
 
-go 1.20
+go 1.21.6
 
 require (
 	ergo.services/application v0.0.0-20240904055159-7f2e1a954c05
 	ergo.services/ergo v1.999.300
 	ergo.services/logger v0.0.0-20240904054830-18407beea628
-	ergo.services/proto v0.0.0-20240904055016-5e44266a5bf6
 )
 
 require (
