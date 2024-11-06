@@ -36,7 +36,7 @@ func (t *ActorPortBin) Init(args ...any) error {
 	options.Binary.ChunkHeaderLengthPosition = 3
 	options.Binary.ChunkHeaderLengthSize = 4
 	options.Binary.ChunkHeaderLengthIncludesHeader = true
-	options.ReadBufferPool = buffs // use pool of buffers
+	options.Binary.ReadBufferPool = buffs // use pool of buffers
 
 	metaport, err := meta.CreatePort(options)
 	if err != nil {
