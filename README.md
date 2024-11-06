@@ -41,4 +41,4 @@ The following example starts Web server with websocket-handler at "/" and spawns
 
 The Ergo Framework allows you to run external programs and interact with them using standard input and output. This example demonstrates this functionality. It launches two programs: one that uses a text format for communication, and another that uses a binary format.
 
-
+![image](https://github.com/user-attachments/assets/f453152f-d316-4e58-9055-fc1b93188aac)
