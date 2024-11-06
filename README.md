@@ -19,6 +19,7 @@ This example project shows how to make synchronous requests to the local and rem
 ![image](https://github.com/ergo-services/examples/assets/118860/6bd21984-e57e-477d-8c59-5be5b6fcbbbe)
 
 ## events
+
 Ergo Framework provides the "Events" feature that implements the distributed "Publisher/Subscriber" design pattern. This example demonstrates this feature in action. It starts node `node-pub@localhost` with a producer process and second node `node-sub@localhost` with two consumer processes.
 
 ![image](https://github.com/ergo-services/examples/assets/118860/878c882b-4863-4c82-b5f4-4789b863d78a)
@@ -30,10 +31,14 @@ This example demonstrates how the node built with Ergo Framework and enabled Erl
 ![image](https://github.com/ergo-services/examples/assets/118860/1d5e456e-dc72-47c7-b532-3768a863a02f)
 
 ## websocket
+
 The following example starts Web server with websocket-handler at "/" and spawns 3 processes to handle websocket-connections.
 
 ![image](https://github.com/ergo-services/examples/assets/118860/4b5a55dd-b801-446b-ac58-bba01cc14515)
 
 
+## port 
+
+The Ergo Framework allows you to run external programs and interact with them using standard input and output. This example demonstrates this functionality. It launches two programs: one that uses a text format for communication, and another that uses a binary format.
 
 
