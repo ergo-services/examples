@@ -3,7 +3,7 @@ module example
 go 1.23.2
 
 require (
-	ergo.services/ergo v1.999.301-0.20241106100023-3ed42e3d5854
+	ergo.services/ergo v1.999.301-0.20241106173731-6e1f9f806f5f
 	ergo.services/logger v0.0.0-20240904054830-18407beea628
 )
 

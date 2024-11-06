@@ -39,17 +39,17 @@ func (t *ActorPortTxt) Init(args ...any) error {
 		return err
 	}
 
-	t.Log().Info("started Port %s (meta-process: %s)", options.Cmd, id)
+	t.Log().Info("started Port (iotxt) %s (meta-process: %s)", options.Cmd, id)
 	return nil
 }
 
 func (t *ActorPortTxt) HandleMessage(from gen.PID, message any) error {
 
 	switch m := message.(type) {
-	case meta.MessagePortStarted:
+	case meta.MessagePortStart:
 		t.Log().Info("new port with tag %q (serving meta-process: %s)", m.Tag, m.ID)
 
-	case meta.MessagePortTerminated:
+	case meta.MessagePortTerminate:
 		t.Log().Info("terminated port with tag %s (serving meta-process: %s)", m.Tag, m.ID)
 
 	case meta.MessagePortText:

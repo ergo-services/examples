@@ -17,7 +17,7 @@ func main() {
 			n, err := os.Stdin.Read(buf)
 			if err != nil {
 				if n == 0 {
-					// closed connection
+					// closed
 					return
 				}
 
@@ -37,7 +37,6 @@ func main() {
 	// where llll = PL+7
 	for {
 		s := lib.RandomString(rand.IntN(20))
-		// fmt.Printf("random string: %s\n", s)
 		l := 7 + len(s)
 		binary.BigEndian.PutUint32(buf[3:7], uint32(l))
 		copy(buf[7:], s)

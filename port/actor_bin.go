@@ -37,6 +37,7 @@ func (t *ActorPortBin) Init(args ...any) error {
 	options.Binary.ChunkHeaderLengthSize = 4
 	options.Binary.ChunkHeaderLengthIncludesHeader = true
 	options.Binary.ReadBufferPool = buffs // use pool of buffers
+	options.Binary.EnableWriteBuffer = true
 
 	metaport, err := meta.CreatePort(options)
 	if err != nil {
@@ -53,17 +54,17 @@ func (t *ActorPortBin) Init(args ...any) error {
 		return err
 	}
 
-	t.Log().Info("started Port %s (meta-process: %s)", options.Cmd, id)
+	t.Log().Info("started Port (iobin) %s (meta-process: %s)", options.Cmd, id)
 	return nil
 }
 
 func (t *ActorPortBin) HandleMessage(from gen.PID, message any) error {
 
 	switch m := message.(type) {
-	case meta.MessagePortStarted:
+	case meta.MessagePortStart:
 		t.Log().Info("new port with tag %q (serving meta-process: %s)", m.Tag, m.ID)
 
-	case meta.MessagePortTerminated:
+	case meta.MessagePortTerminate:
 		t.Log().Info("terminated port with tag %s (serving meta-process: %s)", m.Tag, m.ID)
 
 	case meta.MessagePortData:

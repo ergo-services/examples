@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	var i int
+
 	go func() {
 		buf := make([]byte, 1024)
 		for {
@@ -23,16 +25,14 @@ func main() {
 			if n == 0 {
 				continue
 			}
-			// fmt.Println("GOT:", string(buf[:n]))
 		}
 
 	}()
 
-	i := 0
 	for {
 		i++
-		fmt.Fprintf(os.Stdout, "(iotxt) example TXT-%03d message\n", i)
-		fmt.Fprintf(os.Stderr, "(iotxt) example ERR-%03d message\n", i)
+		fmt.Fprintf(os.Stdout, "(iotxt via stdout) example TXT-%03d message\n", i)
+		fmt.Fprintf(os.Stderr, "(iotxt via stderr) example ERR-%03d message\n", i)
 		time.Sleep(time.Second)
 	}
 }
