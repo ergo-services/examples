@@ -36,7 +36,7 @@ func (t *ActorPortBin) Init(args ...any) error {
 	options.Binary.ChunkHeaderLengthPosition = 3
 	options.Binary.ChunkHeaderLengthSize = 4
 	options.Binary.ChunkHeaderLengthIncludesHeader = true
-	// options.ReadBufferPool = buffs
+	options.ReadBufferPool = buffs // use pool of buffers
 
 	metaport, err := meta.CreatePort(options)
 	if err != nil {
@@ -69,7 +69,8 @@ func (t *ActorPortBin) HandleMessage(from gen.PID, message any) error {
 	case meta.MessagePortData:
 		msg := m.Data[7:] // cut the header (defined in options.ChunkHeaderSize)
 		t.Log().Info("got BIN data (stdout) from %s: %q ", m.ID, string(msg))
-		buffs.Put(m.Data)
+		buffs.Put(m.Data) // put back the buffer into the pool
+
 	case meta.MessagePortError:
 		received := m.Error
 		t.Log().Info("got ERR data (stderr) from %s: %s ", m.ID, received)
