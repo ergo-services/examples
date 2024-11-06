@@ -33,7 +33,8 @@ func main() {
 	}()
 
 	buf := make([]byte, 64)
-	// case 1: header with len 4 bytes. len incl header
+	// header [...llll] payload with len PL...
+	// where llll = PL+7
 	for {
 		s := lib.RandomString(rand.IntN(20))
 		// fmt.Printf("random string: %s\n", s)
