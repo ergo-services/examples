@@ -34,8 +34,6 @@ func (t *ActorPortTxt) Init(args ...any) error {
 	id, err := t.SpawnMeta(metaport, gen.MetaOptions{})
 	if err != nil {
 		t.Log().Error("unable to spawn port meta-process: %s", err)
-		// we should close listening port
-		metaport.Terminate(err)
 		return err
 	}
 
