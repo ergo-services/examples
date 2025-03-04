@@ -16,11 +16,15 @@ import (
 var (
 	OptionNodeName   string
 	OptionNodeCookie string
+	OptionModeBinary bool
+	OptionModeTxt    bool
 )
 
 func init() {
 	flag.StringVar(&OptionNodeName, "name", "demo@localhost", "node name")
 	flag.StringVar(&OptionNodeCookie, "cookie", lib.RandomString(16), "a secret cookie for the network messaging")
+	flag.BoolVar(&OptionModeBinary, "bin", false, "demo with binary mode (with auto-chunking)")
+	flag.BoolVar(&OptionModeTxt, "txt", true, "demo with text mode")
 }
 
 func main() {
@@ -59,12 +63,18 @@ func main() {
 		return
 	}
 
-	// start actors
-	if _, err := node.SpawnRegister("actor-txt", factory_ActorPortTxt, gen.ProcessOptions{}); err != nil {
-		panic(err)
+	// start txt actor
+	if OptionModeTxt {
+		if _, err := node.SpawnRegister("actor-txt", factory_ActorPortTxt, gen.ProcessOptions{}); err != nil {
+			panic(err)
+		}
 	}
-	if _, err := node.SpawnRegister("actor-bin", factory_ActorPortBin, gen.ProcessOptions{}); err != nil {
-		panic(err)
+
+	// start bin actor
+	if OptionModeBinary {
+		if _, err := node.SpawnRegister("actor-bin", factory_ActorPortBin, gen.ProcessOptions{}); err != nil {
+			panic(err)
+		}
 	}
 
 	// wait node

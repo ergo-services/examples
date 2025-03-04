@@ -32,12 +32,12 @@ func (t *ActorPortBin) Init(args ...any) error {
 	options.Args = append(options.Args, "run", "./iobin/main.go")
 	options.Tag = "bin"
 	options.Binary.Enable = true
-	options.Binary.ChunkHeaderSize = 7
-	options.Binary.ChunkHeaderLengthPosition = 3
-	options.Binary.ChunkHeaderLengthSize = 4
-	options.Binary.ChunkHeaderLengthIncludesHeader = true
-	options.Binary.ReadBufferPool = buffs // use pool of buffers
-	options.Binary.EnableWriteBuffer = true
+	options.Binary.ReadChunk.Enable = true
+	options.Binary.ReadChunk.HeaderSize = 7
+	options.Binary.ReadChunk.HeaderLengthPosition = 3
+	options.Binary.ReadChunk.HeaderLengthSize = 4
+	options.Binary.ReadChunk.HeaderLengthIncludesHeader = true
+	options.Binary.ReadBufferPool = buffs // use pool of buffers to keep GC relaxed
 
 	metaport, err := meta.CreatePort(options)
 	if err != nil {

@@ -4,7 +4,7 @@ go 1.21.6
 
 require (
 	ergo.services/application v0.0.0-20240904055159-7f2e1a954c05
-	ergo.services/ergo v1.999.300
+	ergo.services/ergo v1.999.301-0.20250303072529-942c564e5360
 	ergo.services/logger v0.0.0-20240904054830-18407beea628
 )
 

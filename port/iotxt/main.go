@@ -8,7 +8,6 @@ import (
 
 func main() {
 	var i int
-
 	go func() {
 		buf := make([]byte, 1024)
 		for {

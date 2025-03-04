@@ -1,5 +1,5 @@
-ergo.services/ergo v1.999.301-0.20250118134002-f9cfd254bb81 h1:zdK1pLeD1z7IKyiF6MVFbhncDND8Agh240bLwes3Qz0=
-ergo.services/ergo v1.999.301-0.20250118134002-f9cfd254bb81/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
+ergo.services/ergo v1.999.301-0.20250303072529-942c564e5360 h1:kS0Eud0B/cbhHtVIixa029XmcJUbgmrVovCrvQk5o0s=
+ergo.services/ergo v1.999.301-0.20250303072529-942c564e5360/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
 ergo.services/logger v0.0.0-20240904054830-18407beea628 h1:XniB5jh053+do0lbOMfAuERbCwlgLv9VLxglx/9/Nws=
 ergo.services/logger v0.0.0-20240904054830-18407beea628/go.mod h1:stlweVe2KVWo7sLlPMO/fP9ceXIbqPlw0ZZn/+afnOA=
 github.com/fatih/color v1.16.0 h1:zmkK9Ngbjj+K0yRhTVONQh1p/HknKYSlNT+vZCzyokM=

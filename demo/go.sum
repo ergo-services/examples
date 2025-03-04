@@ -1,7 +1,7 @@
 ergo.services/application v0.0.0-20240904055159-7f2e1a954c05 h1:EeLfravNUGx3tPsBdP2W9TpgHD34o1WuDO4OQrbMAiw=
 ergo.services/application v0.0.0-20240904055159-7f2e1a954c05/go.mod h1:huT9GXrAFMIHbRwnzXu0zxna7XjXl3tEpXWnW+IVR2o=
-ergo.services/ergo v1.999.300 h1:bc24HqjaObObkagVknG42uIqbYEXxECRlrHWIR4PnPI=
-ergo.services/ergo v1.999.300/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
+ergo.services/ergo v1.999.301-0.20250303072529-942c564e5360 h1:kS0Eud0B/cbhHtVIixa029XmcJUbgmrVovCrvQk5o0s=
+ergo.services/ergo v1.999.301-0.20250303072529-942c564e5360/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
 ergo.services/logger v0.0.0-20240904054830-18407beea628 h1:XniB5jh053+do0lbOMfAuERbCwlgLv9VLxglx/9/Nws=
 ergo.services/logger v0.0.0-20240904054830-18407beea628/go.mod h1:stlweVe2KVWo7sLlPMO/fP9ceXIbqPlw0ZZn/+afnOA=
 ergo.services/meta v0.0.0-20240904054930-a97f6add8a78 h1:YXdrLtG0aaWuUf8efXHJ+Jn1WIJXa0+hNPpTpHDTxA4=
