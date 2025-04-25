@@ -1,93 +1,121 @@
 package myapp
 
 import (
-	"fmt"
 	"time"
 
 	"ergo.services/ergo/act"
 	"ergo.services/ergo/gen"
 )
 
-// Order with the states: new, processing, shipped, delivered, canceled
+// Code Lock, inspired by https://www.erlang.org/doc/system/statem.html#example-revisited
 
-type OrderData struct {
-	items     []string
-	processed time.Time
-	shipped   time.Time
-	delivered time.Time
-	canceled  time.Time
+type CodeLockData struct {
+	buttons []int
+	code    [4]int
 }
 
-type Order struct {
-	act.StateMachine[OrderData]
+type CodeLock struct {
+	act.StateMachine[CodeLockData]
 }
 
-func factoryOrder() gen.ProcessBehavior {
-	return &Order{}
+func factoryCodeLock() gen.ProcessBehavior {
+	return &CodeLock{}
 }
 
-func (order *Order) Init(args ...any) (act.StateMachineSpec[OrderData], error) {
-	spec := act.NewStateMachineSpec(gen.Atom("new"),
-		// new
-		act.WithStateCallback(gen.Atom("new"), process),
-		act.WithStateCallback(gen.Atom("new"), cancel),
-		// processing
-		act.WithStateCallback(gen.Atom("processing"), ship),
-		act.WithStateCallback(gen.Atom("processing"), cancel),
-		// shipped
-		act.WithStateCallback(gen.Atom("shipped"), deliver),
+type ButtonPress struct {
+	Button int
+}
+
+type Lock struct{}
+
+type ResetCode struct{}
+
+type CodeLength struct{}
+
+func (order *CodeLock) Init(args ...any) (act.StateMachineSpec[CodeLockData], error) {
+	spec := act.NewStateMachineSpec(
+		// The initial state.
+		gen.Atom("locked"),
+
+		// The initial data.
+		act.WithData(CodeLockData{}),
+
+		// Register a function that is called on every state change.
+		act.WithStateEnterCallback(enterState),
+
+		// Register a handler for the ButtonPress message
+		act.WithStateMessageHandler(gen.Atom("open"), handleButtonPress),
+
+		// Register the handler for the Lock message.
+		act.WithStateMessageHandler(gen.Atom("open"), handleLock),
+
+		// Register the handler for the ResetCode message.
+		act.WithStateMessageHandler(gen.Atom("open"), handleResetCode),
+
+		// Register handler for retrieving the length of the code (it would
+		// be nice to have an all-state handler for this)
+		act.WithStateCallHandler(gen.Atom("open"), handleCodeLength),
+		act.WithStateCallHandler(gen.Atom("locked"), handleCodeLength),
 	)
 
 	return spec, nil
 }
 
-type Process struct{}
-
-type Ship struct {
-	priority bool
+func enterState(oldState gen.Atom, newState gen.Atom, data CodeLockData, proc gen.Process) (gen.Atom, CodeLockData, error) {
+	proc.Log().Info("state changed to %s", newState)
+	return newState, data, nil
 }
 
-type Deliver struct{}
-
-type Cancel struct {
-	reason string
-}
-
-func process(sm *act.StateMachine[OrderData], message Process) error {
-	data := sm.Data()
-	if len(data.items) < 1 {
-		return fmt.Errorf("can't process order as there are no items added yet")
+func handleButtonPress(state gen.Atom, data CodeLockData, msg ButtonPress, proc gen.Process) (gen.Atom, CodeLockData, []act.Action, error) {
+	data.buttons = append(data.buttons, msg.Button)
+	if len(data.buttons) < len(data.code) {
+		// code incomplete
+		// reset code after 30 seconds of inactivity
+		reset := act.MessageTimeout{
+			Duration: 30 * time.Second,
+			Message:  ResetCode{},
+		}
+		return state, data, []act.Action{reset}, nil
 	}
-	sm.Log().Info("processing order...")
-	data.processed = time.Now()
-	sm.SetData(data)
-	sm.SetCurrentState(gen.Atom("processing"))
-	return nil
+	for i, b := range data.buttons {
+		if b != data.code[i] {
+			// incorrect code
+			// reset buttons
+			data.buttons = nil
+			return state, data, nil, nil
+		}
+	}
+	// code is correct
+	// reset buttons
+	// automatically lock after 10 seconds
+	data.buttons = nil
+	lockAfter10Seconds := act.StateTimeout{
+		Duration: 10 * time.Second,
+		Message:  Lock{},
+	}
+	return gen.Atom("open"), data, []act.Action{lockAfter10Seconds}, nil
 }
 
-func ship(sm *act.StateMachine[OrderData], message Ship) error {
-	data := sm.Data()
-	sm.Log().Info("shiping order...")
-	data.shipped = time.Now()
-	sm.SetData(data)
-	sm.SetCurrentState(gen.Atom("shipped"))
-	return nil
+func handleLock(state gen.Atom, data CodeLockData, msg Lock, proc gen.Process) (gen.Atom, CodeLockData, []act.Action, error) {
+	doLock()
+	data.buttons = nil
+	return gen.Atom("locked"), data, nil, nil
 }
 
-func deliver(sm *act.StateMachine[OrderData], message Deliver) error {
-	data := sm.Data()
-	sm.Log().Info("delivering order...")
-	data.delivered = time.Now()
-	sm.SetData(data)
-	sm.SetCurrentState(gen.Atom("delivered"))
-	return nil
+func handleResetCode(state gen.Atom, data CodeLockData, msg ResetCode, proc gen.Process) (gen.Atom, CodeLockData, []act.Action, error) {
+	data.buttons = nil
+	return state, data, nil, nil
 }
 
-func cancel(sm *act.StateMachine[OrderData], message Cancel) error {
-	data := sm.Data()
-	sm.Log().Info("canceling order...")
-	data.canceled = time.Now()
-	sm.SetData(data)
-	sm.SetCurrentState(gen.Atom("canceled"))
-	return nil
+func handleCodeLength(state gen.Atom, data CodeLockData, msg Lock, proc gen.Process) (gen.Atom, CodeLockData, int, []act.Action, error) {
+	doLock()
+	return state, data, len(data.code), nil, nil
+}
+
+func doLock() {
+	// interact with the hardware
+}
+
+func doUnlock() {
+	// interact with the hardware
 }
