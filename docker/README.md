@@ -42,12 +42,17 @@ func (a *myActor) Init(args ...any) error {
     return nil
 }
 
-// Handle init message to setup monitoring
-case "init":
-    // Get registrar event name and monitor it
-    registrar, _ := a.Node().Network().Registrar()
-    event, _ := registrar.Event()
-    a.MonitorEvent(event)
+func (a *myActor) HandleMessage(from gen.PID, message any) error {
+    switch message {
+    // Handle init message to setup monitoring
+    case "init":
+        // Get registrar event name and monitor it
+        registrar, _ := a.Node().Network().Registrar()
+        event, _ := registrar.Event()
+        a.MonitorEvent(event)
+    }
+    return nil
+}
 
 // Handle events from registrar
 func (a *myActor) HandleEvent(event gen.MessageEvent) error {
