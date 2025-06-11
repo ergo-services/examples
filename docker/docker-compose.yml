@@ -1,0 +1,80 @@
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.13
+    container_name: etcd
+    command:
+      - /usr/local/bin/etcd
+      - --name=etcd
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://0.0.0.0:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+      - --initial-advertise-peer-urls=http://0.0.0.0:2380
+      - --initial-cluster=etcd=http://0.0.0.0:2380
+      - --initial-cluster-token=docker-example-token
+      - --initial-cluster-state=new
+      - --log-level=warn
+      - --logger=zap
+      - --log-outputs=stderr
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    volumes:
+      - etcd_data:/etcd-data
+    networks:
+      - ergo-net
+    healthcheck:
+      test: ["CMD", "etcdctl", "--endpoints=http://localhost:2379", "endpoint", "health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  node1:
+    build:
+      context: ../../
+      dockerfile: examples/docker/Dockerfile.node1
+    container_name: node1
+    environment:
+      - NODE_NAME=node1@node1
+    depends_on:
+      etcd:
+        condition: service_healthy
+    networks:
+      - ergo-net
+    restart: unless-stopped
+
+  node2:
+    build:
+      context: ../../
+      dockerfile: examples/docker/Dockerfile.node2
+    container_name: node2
+    environment:
+      - NODE_NAME=node2@node2
+    depends_on:
+      etcd:
+        condition: service_healthy
+    networks:
+      - ergo-net
+    restart: unless-stopped
+
+  node3:
+    build:
+      context: ../../
+      dockerfile: examples/docker/Dockerfile.node3
+    container_name: node3
+    environment:
+      - NODE_NAME=node3@node3
+    depends_on:
+      etcd:
+        condition: service_healthy
+    networks:
+      - ergo-net
+    restart: unless-stopped
+
+volumes:
+  etcd_data:
+
+networks:
+  ergo-net:
+    driver: bridge 
