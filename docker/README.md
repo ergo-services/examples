@@ -46,9 +46,8 @@ func (a *myActor) Init(args ...any) error {
 case "init":
     // Get registrar event name and monitor it
     registrar, _ := a.Node().Network().Registrar()
-    event := registrar.Event()
-    ref, _ := a.MonitorEvent(event)
-    a.monitorRef = ref
+    event, _ := registrar.Event()
+    a.MonitorEvent(event)
 
 // Handle events from registrar
 func (a *myActor) HandleEvent(event gen.MessageEvent) error {
