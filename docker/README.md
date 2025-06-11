@@ -21,10 +21,6 @@ This example demonstrates how to run multiple Ergo nodes using etcd as a registr
 ## Quick Start
 
 ```bash
-# Start all services and setup configuration
-make demo
-
-# Or step by step:
 make up              # Start all services
 make setup-config    # Setup sample configuration
 make logs-nodes      # View node logs
