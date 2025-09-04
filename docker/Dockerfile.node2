@@ -1,0 +1,37 @@
+FROM golang:1.21-alpine AS builder
+
+# Install necessary packages
+RUN apk add --no-cache git
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod files from the docker example
+COPY examples/docker/go.mod examples/docker/go.sum ./
+
+# Copy the entire source tree for proper module resolution
+COPY ergo/ ./ergo/
+COPY registrar/ ./registrar/
+COPY logger/ ./logger/
+COPY examples/docker/ ./
+
+# Download dependencies and ensure all are resolved
+RUN go mod tidy
+RUN go mod download
+
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o node2 ./cmd/node2
+
+# Final stage
+FROM alpine:latest
+
+# Install ca-certificates for HTTPS calls
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+# Copy the binary from builder stage
+COPY --from=builder /app/node2 .
+
+# Run the binary
+CMD ["./node2"] 

@@ -1,12 +1,9 @@
 package main
 
 import (
-	"demo/apps/myapp"
 	"flag"
 	"fmt"
 	"time"
-
-	"ergo.services/application/observer"
 
 	"ergo.services/logger/colored"
 	"ergo.services/logger/rotate"
@@ -19,11 +16,15 @@ import (
 var (
 	OptionNodeName   string
 	OptionNodeCookie string
+	OptionModeBinary bool
+	OptionModeTxt    bool
 )
 
 func init() {
-	flag.StringVar(&OptionNodeName, "name", "demo12@localhost", "node name")
+	flag.StringVar(&OptionNodeName, "name", "demo@localhost", "node name")
 	flag.StringVar(&OptionNodeCookie, "cookie", lib.RandomString(16), "a secret cookie for the network messaging")
+	flag.BoolVar(&OptionModeBinary, "bin", false, "demo with binary mode (with auto-chunking)")
+	flag.BoolVar(&OptionModeTxt, "txt", true, "demo with text mode")
 }
 
 func main() {
@@ -31,24 +32,15 @@ func main() {
 
 	flag.Parse()
 
-	// create applications that must be started
-	apps := []gen.ApplicationBehavior{
-		observer.CreateApp(observer.Options{
-			Port: 9911,
-		}),
-		myapp.CreateMyApp(),
-	}
-	options.Applications = apps
-
-	// uncomment lines below to enable TLS with self-signed certificate.
-	cert, _ := lib.GenerateSelfSignedCert("demo service")
-	options.CertManager = gen.CreateCertManager(cert)
-
 	// disable default logger to get rid of multiple logging to the os.Stdout
 	options.Log.DefaultLogger.Disable = true
 
 	// add logger "colored".
-	loggercolored, err := colored.CreateLogger(colored.Options{TimeFormat: time.DateTime})
+	coloredOptions := colored.Options{
+		TimeFormat:  time.DateTime,
+		IncludeName: true,
+	}
+	loggercolored, err := colored.CreateLogger(coloredOptions)
 	if err != nil {
 		panic(err)
 	}
@@ -71,14 +63,20 @@ func main() {
 		return
 	}
 
-	// add simple cron job - send cron message once a minute
-	job := gen.CronJob{
-		Name:   "demo_job",
-		Spec:   "* * * * *",
-		Action: gen.CreateCronActionMessage(gen.Atom("mypool"), gen.MessagePriorityHigh),
+	// start txt actor
+	if OptionModeTxt {
+		if _, err := node.SpawnRegister("actor-txt", factory_ActorPortTxt, gen.ProcessOptions{}); err != nil {
+			panic(err)
+		}
 	}
-	node.Cron().AddJob(job)
 
-	node.Log().Info("Observer Application started and available at http://localhost:9911")
+	// start bin actor
+	if OptionModeBinary {
+		if _, err := node.SpawnRegister("actor-bin", factory_ActorPortBin, gen.ProcessOptions{}); err != nil {
+			panic(err)
+		}
+	}
+
+	// wait node
 	node.Wait()
 }

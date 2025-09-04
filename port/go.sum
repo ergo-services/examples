@@ -1,17 +1,11 @@
-ergo.services/application/observer v0.0.0-20250904221511-2a45e7661b37 h1:TPBmfWL7PtZOPmXbZdvJ+/4yhRB1PjhGkuK7vzlE+uo=
-ergo.services/application/observer v0.0.0-20250904221511-2a45e7661b37/go.mod h1:w5QSh1RMojfPUHOTf1jpTE5ltCiFUEHHvuUlQuFgOyg=
 ergo.services/ergo v1.999.310 h1:qHx35J5UxCheNJaFrOK/1K6/p7jir680+NTPZo6bhbI=
 ergo.services/ergo v1.999.310/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
 ergo.services/logger/colored v0.0.0-20250904215210-2ed1711d3aba h1:efTvM1Q6Qj1ZydJFYX/aFoIWYgLmUHVuUFJmcu3soyA=
 ergo.services/logger/colored v0.0.0-20250904215210-2ed1711d3aba/go.mod h1:3rDg5n/KoyMRjWxrOku8picwPC+tI7QsArt6JqoZGnc=
 ergo.services/logger/rotate v0.0.0-20250904215210-2ed1711d3aba h1:Im5sTvsuR7fOVQElvY/Je8gtGoWnCHpQffNzfBJWoEg=
 ergo.services/logger/rotate v0.0.0-20250904215210-2ed1711d3aba/go.mod h1:5OKjlm2hlUqK25NPZNESs2IVI9/EY34rf51GxnliJUY=
-ergo.services/meta v0.0.0-20240904054930-a97f6add8a78 h1:YXdrLtG0aaWuUf8efXHJ+Jn1WIJXa0+hNPpTpHDTxA4=
-ergo.services/meta v0.0.0-20240904054930-a97f6add8a78/go.mod h1:xS6UTIK9KGYAOUAVdAwXTe+CchjSrqi1wHYiEsRQrJo=
 github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
 github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
-github.com/gorilla/websocket v1.5.0 h1:PPwGk2jz7EePpoHN/+ClbZu8SPxiqlu12wZP/3sWmnc=
-github.com/gorilla/websocket v1.5.0/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
 github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovkB8vQcUbaXHg=
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
