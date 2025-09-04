@@ -22,7 +22,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&OptionNodeName, "name", "demo@localhost", "node name")
+	flag.StringVar(&OptionNodeName, "name", "demo12@localhost", "node name")
 	flag.StringVar(&OptionNodeCookie, "cookie", lib.RandomString(16), "a secret cookie for the network messaging")
 }
 
@@ -33,7 +33,9 @@ func main() {
 
 	// create applications that must be started
 	apps := []gen.ApplicationBehavior{
-		observer.CreateApp(observer.Options{}),
+		observer.CreateApp(observer.Options{
+			Port: 9911,
+		}),
 		myapp.CreateMyApp(),
 	}
 	options.Applications = apps
@@ -68,6 +70,15 @@ func main() {
 		fmt.Printf("Unable to start node '%s': %s\n", OptionNodeName, err)
 		return
 	}
+
+	// add simple cron job - send cron message once a minute
+	job := gen.CronJob{
+		Name:   "demo_job",
+		Spec:   "* * * * *",
+		Action: gen.CreateCronActionMessage(gen.Atom("mypool"), gen.MessagePriorityHigh),
+	}
+	node.Cron().AddJob(job)
+
 	node.Log().Info("Observer Application started and available at http://localhost:9911")
 	node.Wait()
 }

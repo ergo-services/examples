@@ -1,9 +1,9 @@
-ergo.services/ergo v1.999.301-0.20250610084446-27f3fb04739f h1:AXDB3N0WOfo8j9nk57ktKhtZxiyXkUHwRG9u2gExTnA=
-ergo.services/ergo v1.999.301-0.20250610084446-27f3fb04739f/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
-ergo.services/logger/colored v0.0.0-20250520195153-82b4b9a3b9fc h1:b2u+09rk3dDlUhw2ocVdJNUE2SUk1eq0R8yFfJ51wcU=
-ergo.services/logger/colored v0.0.0-20250520195153-82b4b9a3b9fc/go.mod h1:zZ2MnsaaVwDfO+JQQKDjWjMZHVNXP3WJd+mmgOVnCrE=
-ergo.services/registrar/etcd v0.0.0-20250611132512-8da397cb1b73 h1:MqslRAfOgDxGHRgXzX6zM+xe+/KKqsboG7Ec/8ZcgUo=
-ergo.services/registrar/etcd v0.0.0-20250611132512-8da397cb1b73/go.mod h1:rkSg+1/4YGkR6DdTz9X3TiUwPWrb+boAl091QqdnQ3I=
+ergo.services/ergo v1.999.310 h1:qHx35J5UxCheNJaFrOK/1K6/p7jir680+NTPZo6bhbI=
+ergo.services/ergo v1.999.310/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
+ergo.services/logger/colored v0.0.0-20250904215210-2ed1711d3aba h1:efTvM1Q6Qj1ZydJFYX/aFoIWYgLmUHVuUFJmcu3soyA=
+ergo.services/logger/colored v0.0.0-20250904215210-2ed1711d3aba/go.mod h1:3rDg5n/KoyMRjWxrOku8picwPC+tI7QsArt6JqoZGnc=
+ergo.services/registrar/etcd v0.0.0-20250904221241-177952ed4d71 h1:K/flWzG7IM6HOaUo274WbhB/GTrSZuFBl4J/jomibEA=
+ergo.services/registrar/etcd v0.0.0-20250904221241-177952ed4d71/go.mod h1:eheCn5G3G7Na/IBSxd0Sj1scLzBMxh91ALZVi6zylT4=
 github.com/coreos/go-semver v0.3.1 h1:yi21YpKnrx1gt5R+la8n5WgS0kCrsPp33dmEyHReZr4=
 github.com/coreos/go-semver v0.3.1/go.mod h1:irMmmIw/7yzSRPWryHsK7EYSg09caPQL03VsM8rvUec=
 github.com/coreos/go-systemd/v22 v22.5.0 h1:RrqgGjYQKalulkV8NGVIfkXQf6YYmOyiJKk8iXXhfZs=

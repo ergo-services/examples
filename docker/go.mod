@@ -3,9 +3,9 @@ module docker
 go 1.21
 
 require (
-	ergo.services/ergo v1.999.301-0.20250610084446-27f3fb04739f
-	ergo.services/logger/colored v0.0.0-20250520195153-82b4b9a3b9fc
-	ergo.services/registrar/etcd v0.0.0-20250611132512-8da397cb1b73
+	ergo.services/ergo v1.999.310
+	ergo.services/logger/colored v0.0.0-20250904215210-2ed1711d3aba
+	ergo.services/registrar/etcd v0.0.0-20250904221241-177952ed4d71
 )
 
 require (

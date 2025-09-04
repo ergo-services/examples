@@ -3,13 +3,14 @@ module example
 go 1.23.2
 
 require (
-	ergo.services/ergo v1.999.301-0.20250303072529-942c564e5360
-	ergo.services/logger v0.0.0-20240904054830-18407beea628
+	ergo.services/ergo v1.999.310
+	ergo.services/logger/colored v0.0.0-20250904215210-2ed1711d3aba
+	ergo.services/logger/rotate v0.0.0-20250904215210-2ed1711d3aba
 )
 
 require (
-	github.com/fatih/color v1.16.0 // indirect
+	github.com/fatih/color v1.18.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 )
