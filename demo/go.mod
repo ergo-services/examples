@@ -3,10 +3,10 @@ module demo
 go 1.21.6
 
 require (
-	ergo.services/application/observer v0.0.0-20250904221511-2a45e7661b37
-	ergo.services/ergo v1.999.310
-	ergo.services/logger/colored v0.0.0-20250904215210-2ed1711d3aba
-	ergo.services/logger/rotate v0.0.0-20250904215210-2ed1711d3aba
+	ergo.services/application/observer v0.1.1-0.20260227172701-b8a001ce3a97
+	ergo.services/ergo v1.999.320
+	ergo.services/logger/colored v0.1.0
+	ergo.services/logger/rotate v0.1.0
 )
 
 require (

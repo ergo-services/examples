@@ -3,10 +3,10 @@ module example
 go 1.20
 
 require (
-	ergo.services/application/observer v0.0.0-20250904221511-2a45e7661b37
-	ergo.services/ergo v1.999.310
-	ergo.services/logger/colored v0.0.0-20250904215210-2ed1711d3aba
-	ergo.services/proto/erlang23 v0.0.0-20250904215709-583b835499d1
+	ergo.services/application/observer v0.1.0
+	ergo.services/ergo v1.999.320
+	ergo.services/logger/colored v0.1.0
+	ergo.services/proto/erlang23 v0.1.0
 )
 
 require (

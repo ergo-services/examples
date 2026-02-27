@@ -3,9 +3,9 @@ module example
 go 1.23.2
 
 require (
-	ergo.services/ergo v1.999.310
-	ergo.services/logger/colored v0.0.0-20250904215210-2ed1711d3aba
-	ergo.services/logger/rotate v0.0.0-20250904215210-2ed1711d3aba
+	ergo.services/ergo v1.999.320
+	ergo.services/logger/colored v0.1.0
+	ergo.services/logger/rotate v0.1.0
 )
 
 require (

@@ -1,6 +1,5 @@
 [![Gitbook Documentation](https://img.shields.io/badge/GitBook-Documentation-f37f40?style=plastic&logo=gitbook&logoColor=white&style=flat)](https://docs.ergo.services)
 [![Telegram Community](https://img.shields.io/badge/Telegram-ergo__services-229ed9?style=flat&logo=telegram&logoColor=white)](https://t.me/ergo_services)
-[![Twitter](https://img.shields.io/badge/twitter-ergo__services-00acee?style=flat&logo=x&logoColor=white)](https://x.com/ergo_services)
 [![Reddit](https://img.shields.io/badge/Reddit-r/ergo__services-ff4500?style=plastic&logo=reddit&logoColor=white&style=flat)](https://reddit.com/r/ergo_services)
 [![Discord](https://img.shields.io/badge/Discord-ergo__services-7289da?style=plastic&logo=discord&logoColor=white&style=flat)](https://discord.gg/xHEa7KzX)
 
@@ -37,8 +36,16 @@ The following example starts Web server with websocket-handler at "/" and spawns
 ![image](https://github.com/ergo-services/examples/assets/118860/4b5a55dd-b801-446b-ac58-bba01cc14515)
 
 
-## port 
+## docker
+
+Demonstrates running a multi-node Ergo cluster in Docker with etcd as a registrar. Three nodes discover each other through etcd, exchange messages, and react to real-time configuration changes. Shows service discovery, actor communication across nodes, typed hierarchical configuration, and cluster event monitoring.
+
+## port
 
 The Ergo Framework allows you to run external programs and interact with them using standard input and output. This example demonstrates this functionality. It launches two programs: one that uses a text format for communication, and another that uses a binary format.
 
 ![image](https://github.com/user-attachments/assets/f453152f-d316-4e58-9055-fc1b93188aac)
+
+## radar
+
+Demonstrates the [Radar](https://docs.ergo.services/extra-library/applications/radar) application -- a sidecar that bundles Kubernetes health probes and Prometheus metrics on a single HTTP port. Three demo workers (database, cache, API gateway) register health signals and update custom metrics through Radar helper functions.
