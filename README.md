@@ -46,6 +46,10 @@ The Ergo Framework allows you to run external programs and interact with them us
 
 ![image](https://github.com/user-attachments/assets/f453152f-d316-4e58-9055-fc1b93188aac)
 
+## observability
+
+Demonstrates Ergo Framework's built-in observability stack: a 5-node cluster running realistic workloads with Prometheus metrics collection, pre-configured Grafana dashboards, Observer web UI, and MCP-based cluster diagnostics via Claude Code. Includes four scenario applications (latency, messaging, lifecycle, events) that generate different types of load to exercise all framework metrics. Runs with Docker Compose.
+
 ## radar
 
 Demonstrates the [Radar](https://docs.ergo.services/extra-library/applications/radar) application -- a sidecar that bundles Kubernetes health probes and Prometheus metrics on a single HTTP port. Three demo workers (database, cache, API gateway) register health signals and update custom metrics through Radar helper functions.

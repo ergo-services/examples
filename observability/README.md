@@ -1,13 +1,16 @@
 # Observability Example
 
 This example demonstrates Ergo Framework's built-in observability stack: a 5-node cluster
-running realistic workloads with Prometheus metrics collection and a pre-configured Grafana dashboard.
+running realistic workloads with Prometheus metrics collection and pre-configured Grafana dashboards.
 
 ## Overview
 
 Five Ergo nodes form a cluster via etcd service discovery. Each node runs four scenario
 applications that generate different types of load. The `radar` application on each node
-exports Prometheus metrics. Grafana visualizes everything on the **Ergo Cluster** dashboard.
+exports Prometheus metrics. Grafana visualizes everything on two dashboards:
+
+- **Ergo Cluster** -- built-in framework metrics (processes, mailbox latency, network, events, logging, system)
+- **Slowweb HTTP Metrics** -- custom application metrics (HTTP request rate, error rate, duration percentiles)
 
 Metrics covered:
 
@@ -99,14 +102,14 @@ Node log level is set to `debug`. Default logger is disabled, colored logger is 
 
 ```mermaid
 graph TB
-    etcd[(etcd<br/>service discovery)]
+    etcd[("etcd\nservice discovery")]
 
     subgraph Cluster
-        cn1[demo@cluster-node1]
-        cn2[demo@cluster-node2]
-        cn3[demo@cluster-node3]
-        cn4[demo@cluster-node4]
-        cn5[demo@cluster-node5]
+        cn1["demo@cluster-node1"]
+        cn2["demo@cluster-node2"]
+        cn3["demo@cluster-node3"]
+        cn4["demo@cluster-node4"]
+        cn5["demo@cluster-node5"]
     end
 
     cn1 --- cn2
@@ -122,17 +125,17 @@ graph TB
 
     etcd -. registrar .-> Cluster
 
-    prometheus[Prometheus] -- scrapes /metrics --> cn1
-    prometheus -- scrapes /metrics --> cn2
-    prometheus -- scrapes /metrics --> cn3
-    prometheus -- scrapes /metrics --> cn4
-    prometheus -- scrapes /metrics --> cn5
+    prometheus["Prometheus"] -- "/metrics" --> cn1
+    prometheus -- "/metrics" --> cn2
+    prometheus -- "/metrics" --> cn3
+    prometheus -- "/metrics" --> cn4
+    prometheus -- "/metrics" --> cn5
 
-    grafana[Grafana] -- queries --> prometheus
+    grafana["Grafana"] -- queries --> prometheus
 
-    slowweb[slowweb<br/>3-15ms delay] -. HTTP .-> Cluster
+    slowweb["slowweb\n3-15ms delay"] -. HTTP .-> Cluster
 
-    obs[observer@observer<br/>Web UI :9911] -. registrar .-> etcd
+    obs["observer@observer\nWeb UI :9911"] -. registrar .-> etcd
 ```
 
 Each node runs the same set of applications:
