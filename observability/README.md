@@ -176,16 +176,12 @@ Without this, Claude Code will ask for confirmation on every tool call.
 
 #### 4. Install ergo-devops agent and skill (Claude Code)
 
-From the Ergo Framework repository root:
-
 ```bash
+git clone https://github.com/ergo-services/claude.git /tmp/ergo-claude
 mkdir -p ~/.claude/agents ~/.claude/skills
-
-# agent -- interactive SRE diagnostics
-cp claude/agents/ergo-devops.md ~/.claude/agents/
-
-# skill -- quick reference playbooks, invoked via /ergo-devops
-cp -r claude/skills/ergo-devops ~/.claude/skills/
+cp /tmp/ergo-claude/agents/ergo-devops.md ~/.claude/agents/
+cp -r /tmp/ergo-claude/skills/ergo-devops ~/.claude/skills/
+rm -rf /tmp/ergo-claude
 ```
 
 #### 5. Verify
