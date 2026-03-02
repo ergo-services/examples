@@ -67,7 +67,7 @@ graph TB
     etcd -. registrar .-> Cluster
     grafana["Grafana"] -- queries --> prometheus["Prometheus"]
     prometheus -- "/metrics" --> Cluster
-    slowweb["slowweb"] -. HTTP .-> Cluster
+    Cluster -. HTTP .-> slowweb["slowweb"]
     obs["observer@observer
     Web UI :9911"] -. registrar .-> etcd
 ```
