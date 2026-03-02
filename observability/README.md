@@ -186,14 +186,7 @@ rm -rf /tmp/ergo-claude
 
 #### 5. Verify
 
-Start Claude Code and type:
-
-```
-check cluster health on demo-cluster
-```
-
-The agent discovers all 5 nodes, inspects each one, and reports a summary table
-with process counts, uptime, and memory usage.
+Start Claude Code and try any prompt from the [Try It](#try-it) section below.
 
 ### Try It
 
