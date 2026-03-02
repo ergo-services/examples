@@ -1,0 +1,205 @@
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.13
+    container_name: etcd
+    command:
+      - /usr/local/bin/etcd
+      - --name=etcd
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://0.0.0.0:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+      - --initial-advertise-peer-urls=http://0.0.0.0:2380
+      - --initial-cluster=etcd=http://0.0.0.0:2380
+      - --initial-cluster-token=observability-example-token
+      - --initial-cluster-state=new
+      - --log-level=warn
+      - --logger=zap
+      - --log-outputs=stderr
+    networks:
+      - observability-net
+    healthcheck:
+      test: ["CMD", "etcdctl", "--endpoints=http://localhost:2379", "endpoint", "health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.listen-address=:9091
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - observability-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "8888:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=ergo
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/ergo-cluster.json:/var/lib/grafana/dashboards/ergo-cluster.json:ro
+      - ./grafana/slowweb.json:/var/lib/grafana/dashboards/slowweb.json:ro
+    depends_on:
+      - prometheus
+    networks:
+      - observability-net
+
+  slowweb:
+    build:
+      context: .
+      dockerfile: Dockerfile.slowweb
+    container_name: slowweb
+    networks:
+      - observability-net
+
+  cluster-node1:
+    build:
+      context: .
+      args:
+        NODE_CMD: node1
+    container_name: cluster-node1
+    hostname: cluster-node1
+    ports:
+      - "9922:9922"
+    environment:
+      - NODE_NAME=demo@cluster-node1
+    depends_on:
+      etcd:
+        condition: service_healthy
+      slowweb:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/health/live"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+      start_period: 5s
+    networks:
+      - observability-net
+
+  cluster-node2:
+    build:
+      context: .
+      args:
+        NODE_CMD: node2
+    container_name: cluster-node2
+    hostname: cluster-node2
+    environment:
+      - NODE_NAME=demo@cluster-node2
+    depends_on:
+      etcd:
+        condition: service_healthy
+      slowweb:
+        condition: service_started
+      cluster-node1:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/health/live"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+      start_period: 5s
+    networks:
+      - observability-net
+
+  cluster-node3:
+    build:
+      context: .
+      args:
+        NODE_CMD: node3
+    container_name: cluster-node3
+    hostname: cluster-node3
+    environment:
+      - NODE_NAME=demo@cluster-node3
+    depends_on:
+      etcd:
+        condition: service_healthy
+      slowweb:
+        condition: service_started
+      cluster-node2:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/health/live"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+      start_period: 5s
+    networks:
+      - observability-net
+
+  cluster-node4:
+    build:
+      context: .
+      args:
+        NODE_CMD: node4
+    container_name: cluster-node4
+    hostname: cluster-node4
+    environment:
+      - NODE_NAME=demo@cluster-node4
+    depends_on:
+      etcd:
+        condition: service_healthy
+      slowweb:
+        condition: service_started
+      cluster-node3:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/health/live"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+      start_period: 5s
+    networks:
+      - observability-net
+
+  cluster-node5:
+    build:
+      context: .
+      args:
+        NODE_CMD: node5
+    container_name: cluster-node5
+    hostname: cluster-node5
+    environment:
+      - NODE_NAME=demo@cluster-node5
+    depends_on:
+      etcd:
+        condition: service_healthy
+      slowweb:
+        condition: service_started
+      cluster-node4:
+        condition: service_healthy
+    networks:
+      - observability-net
+
+  observer:
+    build:
+      context: .
+      args:
+        NODE_CMD: observer
+    container_name: observer
+    hostname: observer
+    ports:
+      - "9911:9911"
+    environment:
+      - NODE_NAME=observer@observer
+    depends_on:
+      etcd:
+        condition: service_healthy
+      cluster-node1:
+        condition: service_healthy
+    networks:
+      - observability-net
+
+networks:
+  observability-net:
+    driver: bridge

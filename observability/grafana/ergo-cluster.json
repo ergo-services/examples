@@ -1,0 +1,3363 @@
+{
+  "title": "Ergo Cluster",
+  "uid": "ergo-cluster",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Total Processes",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum(ergo_processes_total{node=~\"$node\"})",
+          "legendFormat": "Total"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        }
+      },
+      "description": "Total number of processes across selected nodes including running, waiting, and zombie. See https://docs.ergo.services/basics/node for node lifecycle details."
+    },
+    {
+      "id": 2,
+      "title": "Running",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum(ergo_processes_running{node=~\"$node\"})",
+          "legendFormat": "Running"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "description": "Processes currently executing callbacks or waiting for a Call response. The gap between Total and Running is normal -- most processes spend their time in Sleep state (idle, waiting for messages)."
+    },
+    {
+      "id": 3,
+      "title": "Zombie",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum(ergo_processes_zombie{node=~\"$node\"})",
+          "legendFormat": "Zombie"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        }
+      },
+      "description": "Zombie processes -- terminated abnormally and not properly cleaned up. Non-zero value requires investigation. Green when 0, red when 1 or more."
+    },
+    {
+      "id": 4,
+      "title": "Memory Used",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum(ergo_memory_used_bytes{node=~\"$node\"})",
+          "legendFormat": "Used"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "description": "OS-reported memory used across selected nodes. Compare with Runtime Alloc -- a significant difference may indicate memory fragmentation or the runtime holding unreleased memory."
+    },
+    {
+      "id": 5,
+      "title": "Memory Alloc",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum(ergo_memory_alloc_bytes{node=~\"$node\"})",
+          "legendFormat": "Alloc"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "description": "Go runtime allocated memory across selected nodes. This is heap memory currently in use by Go objects. Compare with OS Used to understand runtime overhead."
+    },
+    {
+      "id": 6,
+      "title": "Total Nodes",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "count(ergo_node_uptime_seconds{node=~\"$node\"})",
+          "legendFormat": "Nodes"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "description": "Number of nodes matching the current filter. A drop means a node left the cluster unexpectedly. Useful for quick partition detection."
+    },
+    {
+      "id": 49,
+      "type": "row",
+      "title": "Mailbox Latency (requires -tags=latency)",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      }
+    },
+    {
+      "id": 50,
+      "title": "Max Latency",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 5
+      },
+      "targets": [
+        {
+          "expr": "max(ergo_mailbox_latency_max_seconds{node=~\"$node\"})",
+          "legendFormat": "Max"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "lineInterpolation": "smooth",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "lineWidth": 1
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "description": "Maximum mailbox latency across all selected nodes. Latency measures how long the oldest message has been sitting in any process mailbox. A value above 1 second means at least one process is either overloaded or stuck. Requires building with -tags=latency. See https://docs.ergo.services/extra-library/actors/metrics for details."
+    },
+    {
+      "id": 51,
+      "title": "Stressed Processes",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 12,
+        "y": 5
+      },
+      "targets": [
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"1ms\"})",
+          "legendFormat": "< 1ms"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range!=\"1ms\"})",
+          "legendFormat": "\u2265 1ms"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "stacking": {
+              "mode": "normal"
+            },
+            "fillOpacity": 60,
+            "lineWidth": 1,
+            "lineInterpolation": "smooth"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "< 1ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "light-blue"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "\u2265 1ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "description": "Processes with non-empty mailboxes split by severity: under 1ms (light-blue, normal) and 1ms or above (orange, worth attention). The total height is the number of stressed processes. A growing orange area indicates increasing backpressure across the cluster. Requires -tags=latency."
+    },
+    {
+      "id": 53,
+      "title": "Max Latency per Node",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "targets": [
+        {
+          "expr": "ergo_mailbox_latency_max_seconds{node=~\"$node\"}",
+          "legendFormat": "{{node}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "lineInterpolation": "smooth",
+            "fillOpacity": 20,
+            "gradientMode": "opacity"
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right"
+        }
+      },
+      "description": "Maximum mailbox latency broken down by node. Helps pinpoint which node is experiencing backpressure. Persistent high latency on a single node while others are low points to a hotspot or a stuck process on that node. Requires -tags=latency."
+    },
+    {
+      "id": 54,
+      "title": "Stressed Processes per Node",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "targets": [
+        {
+          "expr": "ergo_mailbox_latency_processes{node=~\"$node\"}",
+          "legendFormat": "{{node}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineInterpolation": "smooth",
+            "fillOpacity": 20,
+            "gradientMode": "opacity"
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right"
+        }
+      },
+      "description": "Number of processes with non-empty mailboxes per node. Correlate with Max Latency: high max latency + low stressed count = one problematic process; high count + moderate latency = general overload. Requires -tags=latency."
+    },
+    {
+      "id": 52,
+      "title": "Latency Distribution",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "targets": [
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"60s+\"})",
+          "legendFormat": "60s+"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"60s\"})",
+          "legendFormat": "60s"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"30s\"})",
+          "legendFormat": "30s"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"10s\"})",
+          "legendFormat": "10s"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"5s\"})",
+          "legendFormat": "5s"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"1s\"})",
+          "legendFormat": "1s"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"500ms\"})",
+          "legendFormat": "500ms"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"100ms\"})",
+          "legendFormat": "100ms"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"50ms\"})",
+          "legendFormat": "50ms"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"10ms\"})",
+          "legendFormat": "10ms"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"5ms\"})",
+          "legendFormat": "5ms"
+        },
+        {
+          "expr": "sum(ergo_mailbox_latency_distribution{node=~\"$node\", range=\"1ms\"})",
+          "legendFormat": "1ms"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "stacking": {
+              "mode": "normal"
+            },
+            "fillOpacity": 80,
+            "lineWidth": 0,
+            "lineInterpolation": "smooth"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "60s+"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#8B0000"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "60s"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#C4162A"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "30s"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#E02F44"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10s"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#F2495C"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5s"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#FF6243"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1s"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#FF7835"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "500ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#FF9830"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "100ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#F2CC0C"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "50ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#FADE2A"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#B5CE3E"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#96D98D"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#73BF69"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "description": "Distribution of processes across latency ranges from 1ms to 60s+. Uses a flame color gradient: green for low (1ms-10ms), yellow for moderate (50ms-100ms), orange for high (500ms-1s), red for critical (5s-60s+). In a healthy system the chart should be mostly green. Growing red/orange areas indicate degradation. Requires -tags=latency."
+    },
+    {
+      "id": 55,
+      "title": "Top Stressed Processes",
+      "type": "table",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "targets": [
+        {
+          "expr": "topk(50, ergo_mailbox_latency_top_seconds{node=~\"$node\"})",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "endpoint": true,
+              "job": true,
+              "prometheus": true
+            },
+            "indexByName": {
+              "application": 0,
+              "behavior": 1,
+              "name": 2,
+              "pid": 3,
+              "node": 4,
+              "Value": 5,
+              "pod": 6,
+              "container": 7,
+              "cluster": 8,
+              "service": 9
+            },
+            "renameByName": {
+              "application": "Application",
+              "behavior": "Behavior",
+              "name": "Name",
+              "pid": "PID",
+              "node": "Node",
+              "Value": "Latency",
+              "pod": "Pod",
+              "container": "Container",
+              "cluster": "Cluster",
+              "service": "Service"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Latency",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ],
+      "fieldConfig": {
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Latency"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              }
+            ]
+          }
+        ]
+      },
+      "description": "Top-N processes by mailbox latency across the cluster, sorted descending. Directly answers which process is the bottleneck. Columns include Application, Behavior, and Name so you can identify the actor type. Requires -tags=latency."
+    },
+    {
+      "id": 70,
+      "type": "row",
+      "title": "Mailbox Depth",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      }
+    },
+    {
+      "id": 71,
+      "title": "Max Depth",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 26
+      },
+      "targets": [
+        {
+          "expr": "ergo_mailbox_depth_max{node=~\"$node\"}",
+          "legendFormat": "{{node}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "lineInterpolation": "smooth",
+            "fillOpacity": 20,
+            "gradientMode": "opacity"
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "description": "Maximum mailbox queue depth per node -- the highest number of messages queued in any single process mailbox. A growing value means at least one process is accumulating messages faster than it can handle them. Compare with Max Latency: high depth + low latency = fast processing but high inbound rate; high depth + high latency = process falling behind."
+    },
+    {
+      "id": 72,
+      "title": "Depth Distribution",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 26
+      },
+      "targets": [
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"10K+\"})",
+          "legendFormat": "10K+"
+        },
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"10K\"})",
+          "legendFormat": "10K"
+        },
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"5K\"})",
+          "legendFormat": "5K"
+        },
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"1K\"})",
+          "legendFormat": "1K"
+        },
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"500\"})",
+          "legendFormat": "500"
+        },
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"100\"})",
+          "legendFormat": "100"
+        },
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"50\"})",
+          "legendFormat": "50"
+        },
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"10\"})",
+          "legendFormat": "10"
+        },
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"5\"})",
+          "legendFormat": "5"
+        },
+        {
+          "expr": "sum(ergo_mailbox_depth_distribution{node=~\"$node\", range=\"1\"})",
+          "legendFormat": "1"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "stacking": {
+              "mode": "normal"
+            },
+            "fillOpacity": 80,
+            "lineWidth": 0,
+            "lineInterpolation": "smooth"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10K+"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#8B0000"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10K"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#E02F44"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5K"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#F2495C"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1K"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#FF7835"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "500"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#FF9830"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "100"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#F2CC0C"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "50"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#FADE2A"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#B5CE3E"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#96D98D"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#73BF69"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "description": "Distribution of processes across mailbox depth ranges from 1 to 10K+. Uses a flame color gradient: green for low depth (1-10), yellow for moderate (50-100), orange for high (500-1K), red for critical (5K-10K+). A shift toward red indicates growing backpressure."
+    },
+    {
+      "id": 73,
+      "title": "Top Processes by Depth",
+      "type": "table",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "targets": [
+        {
+          "expr": "topk(50, ergo_mailbox_depth_top{node=~\"$node\"})",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "endpoint": true,
+              "job": true,
+              "prometheus": true
+            },
+            "indexByName": {
+              "application": 0,
+              "behavior": 1,
+              "name": 2,
+              "pid": 3,
+              "node": 4,
+              "Value": 5,
+              "pod": 6,
+              "container": 7,
+              "cluster": 8,
+              "service": 9
+            },
+            "renameByName": {
+              "application": "Application",
+              "behavior": "Behavior",
+              "name": "Name",
+              "pid": "PID",
+              "node": "Node",
+              "Value": "Depth",
+              "pod": "Pod",
+              "container": "Container",
+              "cluster": "Cluster",
+              "service": "Service"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Depth",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ],
+      "description": "Processes with the deepest mailbox queues across the cluster, sorted by depth descending. Use this to identify which actors are accumulating the most messages and may need attention."
+    },
+    {
+      "id": 100,
+      "type": "row",
+      "title": "Events",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "panels": [
+        {
+          "id": 101,
+          "title": "Event Publish/Delivery Rate",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 43
+          },
+          "targets": [
+            {
+              "expr": "sum(rate(ergo_events_published_total{node=~\"$node\"}[5m]))",
+              "legendFormat": "Published"
+            },
+            {
+              "expr": "sum(rate(ergo_events_received_total{node=~\"$node\"}[5m]))",
+              "legendFormat": "Received"
+            },
+            {
+              "expr": "sum(rate(ergo_events_local_sent_total{node=~\"$node\"}[5m]))",
+              "legendFormat": "Local Delivered"
+            },
+            {
+              "expr": "sum(rate(ergo_events_remote_sent_total{node=~\"$node\"}[5m]))",
+              "legendFormat": "Remote Sent"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "evt/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity",
+                "lineWidth": 1
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Published"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "blue"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Local Delivered"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "green"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Remote Sent"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "orange"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Received"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "cyan"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "description": "Cluster-wide event throughput. Published (blue): events published by local producers. Received (cyan): events arriving from remote nodes. Local Delivered (green): actual fanout to local subscribers. Remote Sent (orange): messages sent to remote nodes (one per node due to shared subscriptions). In a fully monitored cluster, Published should match the sum of events that other nodes Receive. See https://docs.ergo.services/advanced/pub-sub-internals for the delivery model."
+        },
+        {
+          "id": 109,
+          "title": "Event Utilization",
+          "description": "Utilization state of all registered events. Active (green): publishing with subscribers -- event is doing its job. On Demand (blue): event uses Notify mechanism, waiting for subscribers or data -- correct behavior. Idle (grey): registered without Notify, no publishes, no subscribers -- potentially forgotten. No Subscribers (orange): publishing but nobody listening. No Publishing (yellow): subscribers waiting but producer never published. See https://docs.ergo.services/basics/events for the Notify mechanism.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 43
+          },
+          "targets": [
+            {
+              "expr": "sum(ergo_event_utilization{node=~\"$node\", state=\"active\"})",
+              "legendFormat": "Active"
+            },
+            {
+              "expr": "sum(ergo_event_utilization{node=~\"$node\", state=\"on_demand\"})",
+              "legendFormat": "On Demand"
+            },
+            {
+              "expr": "sum(ergo_event_utilization{node=~\"$node\", state=\"no_publishing\"})",
+              "legendFormat": "No Publishing"
+            },
+            {
+              "expr": "sum(ergo_event_utilization{node=~\"$node\", state=\"no_subscribers\"})",
+              "legendFormat": "No Subscribers"
+            },
+            {
+              "expr": "sum(ergo_event_utilization{node=~\"$node\", state=\"idle\"})",
+              "legendFormat": "Idle"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "stacking": {
+                  "mode": "normal"
+                },
+                "fillOpacity": 60,
+                "lineWidth": 1,
+                "lineInterpolation": "smooth"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Active"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#73BF69"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "On Demand"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#6E9FFF"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "No Publishing"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#FADE2A"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "No Subscribers"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#FF9830"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Idle"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8F8F8F"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          }
+        },
+        {
+          "id": 104,
+          "title": "Registered Events per Node",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 59
+          },
+          "targets": [
+            {
+              "expr": "ergo_registered_events_total{node=~\"$node\"}",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "description": "Number of registered events per node. Steady growth without plateau may indicate event registration leak -- events being registered but never unregistered."
+        },
+        {
+          "id": 103,
+          "title": "Max Subscribers per Node",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 59
+          },
+          "targets": [
+            {
+              "expr": "ergo_event_subscribers_max{node=~\"$node\"}",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "description": "Maximum subscriber count for any single event per node. Includes both LinkEvent and MonitorEvent subscribers. A high value amplifies the cost of each publish due to local fanout. See https://docs.ergo.services/advanced/pub-sub-internals for shared subscription optimization."
+        },
+        {
+          "id": 110,
+          "title": "Event Publish Rate per Node",
+          "description": "Event publish rate per node. Shows which nodes have the most active producers. A spike on one node while others are stable points to a localized producer issue.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 51
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_events_published_total{node=~\"$node\"}[5m])",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "evt/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          }
+        },
+        {
+          "id": 111,
+          "title": "Event Delivery Rate per Node",
+          "description": "Local event delivery rate per node. Shows where fanout load concentrates. High delivery rate relative to publish rate indicates events with many subscribers on that node.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 51
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_events_local_sent_total{node=~\"$node\"}[5m])",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "evt/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          }
+        },
+        {
+          "id": 105,
+          "title": "Top Events by Subscribers",
+          "type": "table",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 67
+          },
+          "targets": [
+            {
+              "expr": "topk(50, ergo_event_subscribers_top{node=~\"$node\"})",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "endpoint": true,
+                  "job": true,
+                  "prometheus": true
+                },
+                "indexByName": {
+                  "event": 0,
+                  "producer": 1,
+                  "node": 2,
+                  "Value": 3
+                },
+                "renameByName": {
+                  "event": "Event",
+                  "producer": "Producer",
+                  "node": "Node",
+                  "Value": "Subscribers"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "field": "Subscribers",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "Top-N events by subscriber count (LinkEvent + MonitorEvent combined). Identifies events with the widest audience. Events with many subscribers amplify each publish into many local deliveries."
+        },
+        {
+          "id": 106,
+          "title": "Top Events by Published",
+          "type": "table",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 67
+          },
+          "targets": [
+            {
+              "expr": "topk(50, ergo_event_published_top{node=~\"$node\"})",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "endpoint": true,
+                  "job": true,
+                  "prometheus": true
+                },
+                "indexByName": {
+                  "event": 0,
+                  "producer": 1,
+                  "node": 2,
+                  "Value": 3
+                },
+                "renameByName": {
+                  "event": "Event",
+                  "producer": "Producer",
+                  "node": "Node",
+                  "Value": "Published"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "field": "Published",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "Top-N events by total messages published. Identifies the most active producers. High publish count with low subscriber count may indicate wasteful publishing."
+        },
+        {
+          "id": 107,
+          "title": "Top Events by Local Deliveries",
+          "type": "table",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 75
+          },
+          "targets": [
+            {
+              "expr": "topk(50, ergo_event_local_sent_top{node=~\"$node\"})",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "endpoint": true,
+                  "job": true,
+                  "prometheus": true
+                },
+                "indexByName": {
+                  "event": 0,
+                  "producer": 1,
+                  "node": 2,
+                  "Value": 3
+                },
+                "renameByName": {
+                  "event": "Event",
+                  "producer": "Producer",
+                  "node": "Node",
+                  "Value": "Local Deliveries"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "field": "Local Deliveries",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "Top-N events by messages delivered to local subscribers. Shows which events create the most local fanout load. An event that publishes rarely but has many subscribers will rank high here -- it creates more delivery work per publish."
+        },
+        {
+          "id": 108,
+          "title": "Top Events by Remote Sent",
+          "type": "table",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 75
+          },
+          "targets": [
+            {
+              "expr": "topk(50, ergo_event_remote_sent_top{node=~\"$node\"})",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "endpoint": true,
+                  "job": true,
+                  "prometheus": true
+                },
+                "indexByName": {
+                  "event": 0,
+                  "producer": 1,
+                  "node": 2,
+                  "Value": 3
+                },
+                "renameByName": {
+                  "event": "Event",
+                  "producer": "Producer",
+                  "node": "Node",
+                  "Value": "Remote Sent"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "field": "Remote Sent",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "Top-N events by messages sent to remote nodes. Shows which events generate the most inter-node network traffic. Each remote send is one message per node due to the shared subscription optimization. See https://docs.ergo.services/advanced/pub-sub-internals for details."
+        }
+      ]
+    },
+    {
+      "id": 80,
+      "type": "row",
+      "title": "Process Activity",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
+      "panels": [
+        {
+          "id": 85,
+          "title": "Message Throughput (Cluster Total)",
+          "description": "Cluster-wide message throughput and wakeup rate. In (green): messages received. Out (blue): messages sent. Wakeups (purple dashed): process scheduling frequency. In a fully monitored cluster (metrics actor on every node), In and Out should be approximately balanced. A small imbalance is normal due to framework-internal messages (exit signals, down notifications) that increment In without a corresponding Out. Persistent significant imbalance indicates nodes without metrics collection: Out > In means messages are sent to unmonitored nodes, In > Out means unmonitored nodes are sending messages into the cluster. The gap between In and Wakeups shows drain effect: when they track together -- spare capacity, when In >> Wakeups -- processes batch under load.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 43
+          },
+          "targets": [
+            {
+              "expr": "sum(rate(ergo_process_messages_in{node=~\"$node\"}[5m]))",
+              "legendFormat": "In"
+            },
+            {
+              "expr": "sum(rate(ergo_process_messages_out{node=~\"$node\"}[5m]))",
+              "legendFormat": "Out"
+            },
+            {
+              "expr": "sum(rate(ergo_process_wakeups{node=~\"$node\"}[5m]))",
+              "legendFormat": "Wakeups"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "msg/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity",
+                "lineWidth": 1
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "In"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "green"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Out"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "blue"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Wakeups"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "purple"
+                    }
+                  },
+                  {
+                    "id": "custom.lineStyle",
+                    "value": {
+                      "fill": "dash",
+                      "dash": [
+                        10,
+                        5
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          }
+        },
+        {
+          "id": 81,
+          "title": "Utilization Distribution",
+          "description": "Distribution of processes by utilization (RunningTime/Uptime) -- the fraction of lifetime spent executing callbacks. Green for low (1-10%), yellow for moderate (25-50%), red for high (75-90%+). A shift toward higher ranges indicates increasing compute load. See https://docs.ergo.services/basics/process for process lifecycle.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 67
+          },
+          "targets": [
+            {
+              "expr": "sum(ergo_process_utilization_distribution{node=~\"$node\", range=\"90%+\"})",
+              "legendFormat": "90%+"
+            },
+            {
+              "expr": "sum(ergo_process_utilization_distribution{node=~\"$node\", range=\"90%\"})",
+              "legendFormat": "90%"
+            },
+            {
+              "expr": "sum(ergo_process_utilization_distribution{node=~\"$node\", range=\"75%\"})",
+              "legendFormat": "75%"
+            },
+            {
+              "expr": "sum(ergo_process_utilization_distribution{node=~\"$node\", range=\"50%\"})",
+              "legendFormat": "50%"
+            },
+            {
+              "expr": "sum(ergo_process_utilization_distribution{node=~\"$node\", range=\"25%\"})",
+              "legendFormat": "25%"
+            },
+            {
+              "expr": "sum(ergo_process_utilization_distribution{node=~\"$node\", range=\"10%\"})",
+              "legendFormat": "10%"
+            },
+            {
+              "expr": "sum(ergo_process_utilization_distribution{node=~\"$node\", range=\"5%\"})",
+              "legendFormat": "5%"
+            },
+            {
+              "expr": "sum(ergo_process_utilization_distribution{node=~\"$node\", range=\"1%\"})",
+              "legendFormat": "1%"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "stacking": {
+                  "mode": "normal"
+                },
+                "fillOpacity": 80,
+                "lineWidth": 0,
+                "lineInterpolation": "smooth"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "90%+"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8B0000"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "90%"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#F2495C"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "75%"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#FF7835"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "50%"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#FF9830"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "25%"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#FADE2A"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "10%"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B5CE3E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "5%"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#96D98D"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "1%"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#73BF69"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          }
+        },
+        {
+          "id": 82,
+          "title": "Message Throughput per Node",
+          "description": "Message throughput and wakeup rate per node. Shows inbound, outbound, and wakeup rates. A gap between message rate and wakeup rate on a specific node indicates that node's processes are batching -- under load.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 43
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_process_messages_in{node=~\"$node\"}[5m])",
+              "legendFormat": "{{node}} in"
+            },
+            {
+              "expr": "rate(ergo_process_messages_out{node=~\"$node\"}[5m])",
+              "legendFormat": "{{node}} out"
+            },
+            {
+              "expr": "rate(ergo_process_wakeups{node=~\"$node\"}[5m])",
+              "legendFormat": "{{node}} wakeups"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "msg/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          }
+        },
+        {
+          "id": 86,
+          "title": "Max Utilization per Node",
+          "description": "Maximum process utilization (RunningTime/Uptime) per node. Shows the busiest process on each node. Persistently high values indicate a compute-bound actor that may need load distribution.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 67
+          },
+          "targets": [
+            {
+              "expr": "ergo_process_utilization_max{node=~\"$node\"}",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          }
+        },
+        {
+          "id": 83,
+          "title": "Top Processes by Utilization",
+          "description": "Busiest processes by lifetime utilization across the cluster. A process at 90%+ is almost always busy executing callbacks and may need load distribution. See https://docs.ergo.services/basics/process for process scheduling.",
+          "type": "table",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 75
+          },
+          "targets": [
+            {
+              "expr": "topk(50, ergo_process_utilization_top{node=~\"$node\"})",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "endpoint": true,
+                  "job": true,
+                  "prometheus": true
+                },
+                "indexByName": {
+                  "application": 0,
+                  "behavior": 1,
+                  "name": 2,
+                  "pid": 3,
+                  "node": 4,
+                  "Value": 5,
+                  "pod": 6,
+                  "container": 7,
+                  "cluster": 8,
+                  "service": 9
+                },
+                "renameByName": {
+                  "application": "Application",
+                  "behavior": "Behavior",
+                  "name": "Name",
+                  "pid": "PID",
+                  "node": "Node",
+                  "Value": "Utilization",
+                  "pod": "Pod",
+                  "container": "Container",
+                  "cluster": "Cluster",
+                  "service": "Service"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "field": "Utilization",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ],
+          "fieldConfig": {
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Utilization"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 84,
+          "title": "Actor Running Time per Node",
+          "description": "Seconds of callback execution per second per node -- effectively CPU utilization by actor callbacks. When this approaches the number of CPU cores, the node is compute-saturated.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 75
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_process_running_time_seconds{node=~\"$node\"}[5m])",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          }
+        },
+        {
+          "id": 87,
+          "title": "Top Processes by Messages In",
+          "description": "Top-N processes by total messages received (cumulative). Identifies which actors handle the most inbound traffic. Includes messages from other processes, event deliveries, and call requests.",
+          "type": "table",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 51
+          },
+          "targets": [
+            {
+              "expr": "topk(50, ergo_process_messages_in_top{node=~\"$node\"})",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "options": {},
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "endpoint": true,
+                  "job": true,
+                  "prometheus": true
+                },
+                "indexByName": {
+                  "application": 0,
+                  "behavior": 1,
+                  "name": 2,
+                  "pid": 3,
+                  "node": 4,
+                  "Value": 5
+                },
+                "renameByName": {
+                  "application": "Application",
+                  "behavior": "Behavior",
+                  "name": "Name",
+                  "pid": "PID",
+                  "node": "Node",
+                  "Value": "Messages In"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "field": "Messages In",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": 88,
+          "title": "Top Processes by Messages Out",
+          "description": "Top-N processes by total messages sent (cumulative). Identifies which actors generate the most outbound traffic. Includes sends to processes, event publishes, call requests, and responses.",
+          "type": "table",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 51
+          },
+          "targets": [
+            {
+              "expr": "topk(50, ergo_process_messages_out_top{node=~\"$node\"})",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "options": {},
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "endpoint": true,
+                  "job": true,
+                  "prometheus": true
+                },
+                "indexByName": {
+                  "application": 0,
+                  "behavior": 1,
+                  "name": 2,
+                  "pid": 3,
+                  "node": 4,
+                  "Value": 5
+                },
+                "renameByName": {
+                  "application": "Application",
+                  "behavior": "Behavior",
+                  "name": "Name",
+                  "pid": "PID",
+                  "node": "Node",
+                  "Value": "Messages Out"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "field": "Messages Out",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": 89,
+          "title": "Drains per Node",
+          "description": "Average messages per wakeup per node. Computed from aggregate metrics: rate(messages_in) / rate(wakeups). Shows how many messages each wakeup cycle handles on average. Value ~1 means spare capacity. Growing value means processes are batching under load.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 59
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_process_messages_in{node=~\"$node\"}[5m]) / rate(ergo_process_wakeups{node=~\"$node\"}[5m])",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          }
+        },
+        {
+          "id": 90,
+          "title": "Top Processes by Drains",
+          "description": "Top-N processes by drain ratio (MessagesIn / Wakeups). Shows which processes handle the most messages per wakeup cycle. High drain ratio means the process is continuously busy, handling messages in batches rather than one at a time.",
+          "type": "table",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 59
+          },
+          "targets": [
+            {
+              "expr": "topk(50, ergo_process_drains_top{node=~\"$node\"})",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "endpoint": true,
+                  "job": true,
+                  "prometheus": true
+                },
+                "indexByName": {
+                  "application": 0,
+                  "behavior": 1,
+                  "name": 2,
+                  "pid": 3,
+                  "node": 4,
+                  "Value": 5
+                },
+                "renameByName": {
+                  "application": "Application",
+                  "behavior": "Behavior",
+                  "name": "Name",
+                  "pid": "PID",
+                  "node": "Node",
+                  "Value": "Drains"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "field": "Drains",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 60,
+      "type": "row",
+      "title": "Processes",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
+      "panels": [
+        {
+          "id": 10,
+          "title": "Processes (total)",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 44
+          },
+          "targets": [
+            {
+              "expr": "ergo_processes_total{node=~\"$node\"}",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineInterpolation": "smooth"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Total process count per node over time. Steady growth without a plateau may indicate a process leak -- processes being spawned but never terminated. See https://docs.ergo.services/basics/process for process lifecycle."
+        },
+        {
+          "id": 11,
+          "title": "Processes (running)",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 44
+          },
+          "targets": [
+            {
+              "expr": "ergo_processes_running{node=~\"$node\"}",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineInterpolation": "smooth"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Running process count per node. Helps identify load distribution across the cluster. Uneven running counts may point to hotspot nodes that need rebalancing."
+        },
+        {
+          "id": 14,
+          "title": "Process Spawn Rate",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 52
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_processes_spawned_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} spawned"
+            },
+            {
+              "expr": "rate(ergo_processes_spawn_failed_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} failed"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": ".*failed.*"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "red"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Process spawn rate per node. Also shows failed spawn attempts in red. Spawn failures indicate resource exhaustion or configuration errors. A sudden spike may signal a supervisor restart loop. See https://docs.ergo.services/basics/supervision-tree for restart strategies."
+        },
+        {
+          "id": 15,
+          "title": "Process Termination Rate",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 52
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_processes_terminated_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} terminated"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Process termination rate per node. When termination consistently exceeds spawn rate, the node is draining. When spawn exceeds termination, process count is growing."
+        },
+        {
+          "id": 16,
+          "title": "Init Time per Node",
+          "description": "Maximum ProcessInit duration per node as a bar gauge. Color indicates severity: green < 100ms, yellow < 1s, red > 1s. Shows which nodes have the slowest process initialization.",
+          "type": "bargauge",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 60
+          },
+          "targets": [
+            {
+              "expr": "ergo_process_init_time_max_seconds{node=~\"$node\"}",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 0.1
+                  },
+                  {
+                    "color": "orange",
+                    "value": 0.5
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              }
+            }
+          },
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "showUnfilled": true
+          }
+        },
+        {
+          "id": 17,
+          "title": "Top Processes by Init Time",
+          "description": "Top-N processes by ProcessInit duration. Identifies which actor types take the longest to initialize. Long init times may indicate heavy setup work, blocking I/O, or synchronous calls during initialization.",
+          "type": "table",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 60
+          },
+          "targets": [
+            {
+              "expr": "topk(50, ergo_process_init_time_top_seconds{node=~\"$node\"})",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "endpoint": true,
+                  "job": true,
+                  "prometheus": true
+                },
+                "indexByName": {
+                  "application": 0,
+                  "behavior": 1,
+                  "name": 2,
+                  "pid": 3,
+                  "node": 4,
+                  "Value": 5
+                },
+                "renameByName": {
+                  "application": "Application",
+                  "behavior": "Behavior",
+                  "name": "Name",
+                  "pid": "PID",
+                  "node": "Node",
+                  "Value": "Init Time"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "field": "Init Time",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ],
+          "fieldConfig": {
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Init Time"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "s"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "type": "row",
+      "title": "Resources",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
+      "panels": [
+        {
+          "id": 20,
+          "title": "CPU User Time per Node",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 45
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_cpu_user_seconds{node=~\"$node\"}[1m]) / on(node) ergo_cpu_cores",
+              "legendFormat": "{{node}} user"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "User CPU time per node, normalized by core count (percentage). High user CPU indicates compute-bound application logic. Useful for identifying nodes that need horizontal scaling."
+        },
+        {
+          "id": 21,
+          "title": "CPU System Time per Node",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 45
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_cpu_system_seconds{node=~\"$node\"}[1m]) / on(node) ergo_cpu_cores",
+              "legendFormat": "{{node}} system"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "System CPU time per node, normalized by core count (percentage). High system CPU relative to user CPU suggests excessive syscalls, context switching, or I/O pressure rather than application workload."
+        },
+        {
+          "id": 12,
+          "title": "Memory (OS:used)",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 53
+          },
+          "targets": [
+            {
+              "expr": "ergo_memory_used_bytes{node=~\"$node\"}",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "OS-reported memory used per node. Monotonic growth over time is a strong indicator of a memory leak. Compare across nodes to spot outliers."
+        },
+        {
+          "id": 13,
+          "title": "Memory (Runtime:alloc)",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 53
+          },
+          "targets": [
+            {
+              "expr": "ergo_memory_alloc_bytes{node=~\"$node\"}",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Go runtime allocated memory per node. A sawtooth pattern is normal (allocation followed by GC). A flat or steadily rising baseline between GC cycles indicates objects not being collected."
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "type": "row",
+      "title": "Logging",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "panels": [
+        {
+          "id": 113,
+          "title": "Log Messages Rate",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 46
+          },
+          "targets": [
+            {
+              "expr": "sum by (level) (rate(ergo_log_messages_total{node=~\"$node\",level=\"debug\"}[1m]))",
+              "legendFormat": "debug"
+            },
+            {
+              "expr": "sum by (level) (rate(ergo_log_messages_total{node=~\"$node\",level=\"info\"}[1m]))",
+              "legendFormat": "info"
+            },
+            {
+              "expr": "sum by (level) (rate(ergo_log_messages_total{node=~\"$node\",level=\"warning\"}[1m]))",
+              "legendFormat": "warning"
+            },
+            {
+              "expr": "sum by (level) (rate(ergo_log_messages_total{node=~\"$node\",level=\"error\"}[1m]))",
+              "legendFormat": "error"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "debug"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "blue"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "info"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "green"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "warning"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "yellow"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "error"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "red"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "description": "Log messages rate by level across selected nodes."
+        },
+        {
+          "id": 114,
+          "title": "Log Messages per Node",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 46
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_log_messages_total{node=~\"$node\",level!=\"trace\",level!=\"panic\"}[1m])",
+              "legendFormat": "{{node}} {{level}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "description": "Log messages rate per node and level. Shows which node generates the most log traffic."
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "type": "row",
+      "title": "Network",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "panels": [
+        {
+          "id": 30,
+          "title": "Network Messages (Cluster Total)",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 46
+          },
+          "targets": [
+            {
+              "expr": "sum(rate(ergo_remote_messages_in_total[1m]))",
+              "legendFormat": "\u2190 In"
+            },
+            {
+              "expr": "sum(rate(ergo_remote_messages_out_total[1m]))",
+              "legendFormat": "\u2192 Out"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "msg/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "description": "Cluster-wide inbound and outbound message rate. Provides a high-level view of cluster communication intensity. Sudden drops may indicate network partitions or node failures. See https://docs.ergo.services/networking/network-stack for the network architecture."
+        },
+        {
+          "id": 31,
+          "title": "Network Traffic (Cluster Total)",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 46
+          },
+          "targets": [
+            {
+              "expr": "sum(rate(ergo_remote_bytes_in_total[1m]))",
+              "legendFormat": "\u2190 In"
+            },
+            {
+              "expr": "sum(rate(ergo_remote_bytes_out_total[1m]))",
+              "legendFormat": "\u2192 Out"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "description": "Cluster-wide inbound and outbound byte rate. Helps estimate bandwidth requirements. A growing gap between message rate and byte rate means average message size is changing."
+        },
+        {
+          "id": 32,
+          "title": "Network Messages per Node",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 54
+          },
+          "targets": [
+            {
+              "expr": "sum by (node) (rate(ergo_remote_messages_in_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "{{node}} \u2190 in"
+            },
+            {
+              "expr": "sum by (node) (rate(ergo_remote_messages_out_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "{{node}} \u2192 out"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "msg/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Inbound and outbound message rate per node. Identifies communication hotspots and whether traffic is evenly distributed across the cluster."
+        },
+        {
+          "id": 33,
+          "title": "Network Traffic per Node",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 54
+          },
+          "targets": [
+            {
+              "expr": "sum by (node) (rate(ergo_remote_bytes_in_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "{{node}} \u2190 in"
+            },
+            {
+              "expr": "sum by (node) (rate(ergo_remote_bytes_out_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "{{node}} \u2192 out"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Inbound and outbound byte rate per node. Disproportionately high byte rate relative to message rate indicates a node is sending larger payloads -- useful for identifying bulk data transfers."
+        },
+        {
+          "id": 34,
+          "title": "Network Messages Detail",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 62
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_remote_messages_in_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} \u2190 {{remote_node}}"
+            },
+            {
+              "expr": "rate(ergo_remote_messages_out_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} \u2192 {{remote_node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "msg/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Message rate between each pair of connected nodes. Traces specific inter-node communication paths and helps detect unexpected or missing connections."
+        },
+        {
+          "id": 35,
+          "title": "Network Traffic Detail",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 62
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_remote_bytes_in_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} \u2190 {{remote_node}}"
+            },
+            {
+              "expr": "rate(ergo_remote_bytes_out_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} \u2192 {{remote_node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Byte rate between each pair of connected nodes. Identifies which specific node-to-node link is saturated or carrying the most data."
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "10s",
+  "templating": {
+    "list": [
+      {
+        "name": "node",
+        "label": "Node",
+        "type": "query",
+        "query": "label_values(ergo_node_uptime_seconds, node)",
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        }
+      }
+    ]
+  }
+}

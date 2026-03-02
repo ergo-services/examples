@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9091']
+
+  - job_name: 'ergo'
+    static_configs:
+      - targets: ['cluster-node1:9090', 'cluster-node2:9090', 'cluster-node3:9090', 'cluster-node4:9090', 'cluster-node5:9090']

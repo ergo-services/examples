@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: 'ergo'
+    folder: 'Ergo'
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

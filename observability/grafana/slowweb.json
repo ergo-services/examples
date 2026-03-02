@@ -1,0 +1,198 @@
+{
+  "title": "Slowweb HTTP Metrics",
+  "uid": "slowweb-http",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Request Rate",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum by (node) (rate(slowweb_requests_total{node=~\"$node\"}[1m]))",
+          "legendFormat": "{{node}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {
+            "lineInterpolation": "smooth",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "lineWidth": 2
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "description": "HTTP requests per second to slowweb service, grouped by node."
+    },
+    {
+      "id": 2,
+      "title": "Error Rate",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum by (node) (rate(slowweb_requests_total{node=~\"$node\", status=\"error\"}[1m]))",
+          "legendFormat": "{{node}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {
+            "lineInterpolation": "smooth",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "lineWidth": 2
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "description": "Failed HTTP requests per second to slowweb service, grouped by node."
+    },
+    {
+      "id": 3,
+      "title": "Average Duration",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (node) (rate(slowweb_request_duration_seconds_sum{node=~\"$node\"}[1m])) / sum by (node) (rate(slowweb_request_duration_seconds_count{node=~\"$node\"}[1m]))",
+          "legendFormat": "{{node}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "lineInterpolation": "smooth",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "lineWidth": 2
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "description": "Average HTTP request duration to slowweb service, grouped by node."
+    },
+    {
+      "id": 4,
+      "title": "Duration Percentiles",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum by (le, node) (rate(slowweb_request_duration_seconds_bucket{node=~\"$node\"}[1m])))",
+          "legendFormat": "p50 {{node}}"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, node) (rate(slowweb_request_duration_seconds_bucket{node=~\"$node\"}[1m])))",
+          "legendFormat": "p95 {{node}}"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, node) (rate(slowweb_request_duration_seconds_bucket{node=~\"$node\"}[1m])))",
+          "legendFormat": "p99 {{node}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "lineInterpolation": "smooth",
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "lineWidth": 2
+          }
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "description": "HTTP request duration percentiles (p50, p95, p99) to slowweb service, grouped by node."
+    }
+  ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "10s",
+  "templating": {
+    "list": [
+      {
+        "name": "node",
+        "label": "Node",
+        "type": "query",
+        "query": "label_values(slowweb_requests_total, node)",
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        }
+      }
+    ]
+  }
+}
