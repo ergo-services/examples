@@ -101,8 +101,6 @@ services:
         condition: service_healthy
       slowweb:
         condition: service_started
-      cluster-node1:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/health/live"]
       interval: 3s
@@ -126,8 +124,6 @@ services:
         condition: service_healthy
       slowweb:
         condition: service_started
-      cluster-node2:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/health/live"]
       interval: 3s
@@ -151,8 +147,6 @@ services:
         condition: service_healthy
       slowweb:
         condition: service_started
-      cluster-node3:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/health/live"]
       interval: 3s
@@ -176,8 +170,6 @@ services:
         condition: service_healthy
       slowweb:
         condition: service_started
-      cluster-node4:
-        condition: service_healthy
     networks:
       - observability-net
 
@@ -194,8 +186,6 @@ services:
       - NODE_NAME=observer@observer
     depends_on:
       etcd:
-        condition: service_healthy
-      cluster-node1:
         condition: service_healthy
     networks:
       - observability-net
