@@ -2490,7 +2490,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 67
+            "y": 83
           },
           "targets": [
             {
@@ -2604,7 +2604,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 67
+            "y": 83
           },
           "targets": [
             {
@@ -2847,6 +2847,7 @@
           },
           "options": {
             "displayMode": "gradient",
+            "namePlacement": "top",
             "orientation": "horizontal",
             "reduceOptions": {
               "calcs": [
@@ -3296,6 +3297,9 @@
             "legend": {
               "displayMode": "list",
               "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
             }
           },
           "description": "Cluster-wide inbound and outbound message rate. Provides a high-level view of cluster communication intensity. Sudden drops may indicate network partitions or node failures. See https://docs.ergo.services/networking/network-stack for the network architecture."
@@ -3334,6 +3338,9 @@
             "legend": {
               "displayMode": "list",
               "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
             }
           },
           "description": "Cluster-wide inbound and outbound byte rate. Helps estimate bandwidth requirements. A growing gap between message rate and byte rate means average message size is changing."
@@ -3487,45 +3494,105 @@
           "description": "Byte rate between each pair of connected nodes. Identifies which specific node-to-node link is saturated or carrying the most data."
         },
         {
-          "id": 117,
-          "title": "Connected Nodes",
-          "description": "Number of connected remote nodes per node as a bar gauge. Shows cluster connectivity at a glance. A node with zero connections is isolated. Color indicates health: red (0) -- isolated, orange (1) -- degraded, yellow (2) -- partial, green (3+) -- healthy.",
-          "type": "bargauge",
+          "id": 119,
+          "title": "Connectivity Strength",
+          "description": "Percentage of full mesh achieved across the cluster. 100% = every node connected to every other. Cluster size is based on nodes reporting metrics.",
+          "type": "stat",
           "gridPos": {
             "h": 8,
-            "w": 12,
+            "w": 2,
             "x": 0,
             "y": 70
           },
           "targets": [
             {
-              "expr": "ergo_connected_nodes_total{node=~\"$node\"}",
-              "legendFormat": "{{node}}"
+              "expr": "avg(ergo_connected_nodes_total{node=~\"$node\"} / scalar(clamp_min(count(ergo_connected_nodes_total) - 1, 1)) * 100)",
+              "legendFormat": "Avg"
             }
           ],
           "fieldConfig": {
             "defaults": {
-              "unit": "short",
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
               "color": {
                 "mode": "thresholds"
               },
               "thresholds": {
                 "steps": [
                   {
-                    "color": "red",
+                    "color": "blue",
                     "value": null
                   },
                   {
+                    "color": "semi-dark-blue",
+                    "value": 25
+                  },
+                  {
+                    "color": "light-orange",
+                    "value": 60
+                  },
+                  {
                     "color": "orange",
-                    "value": 1
+                    "value": 90
+                  }
+                ]
+              }
+            }
+          },
+          "options": {
+            "graphMode": "none",
+            "colorMode": "value",
+            "textMode": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            }
+          }
+        },
+        {
+          "id": 117,
+          "title": "Nodes Connectivity Strength",
+          "description": "Connectivity percentage per node. 100% means connected to every other node. Blue to orange gradient shows connectivity strength. Cluster size is based on nodes reporting metrics.",
+          "type": "bargauge",
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 2,
+            "y": 70
+          },
+          "targets": [
+            {
+              "expr": "sort_desc(ergo_connected_nodes_total{node=~\"$node\"} / scalar(clamp_min(count(ergo_connected_nodes_total) - 1, 1)) * 100)",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
                   },
                   {
-                    "color": "yellow",
-                    "value": 2
+                    "color": "semi-dark-blue",
+                    "value": 25
                   },
                   {
-                    "color": "green",
-                    "value": 3
+                    "color": "light-orange",
+                    "value": 60
+                  },
+                  {
+                    "color": "orange",
+                    "value": 90
                   }
                 ]
               }
@@ -3533,6 +3600,7 @@
           },
           "options": {
             "displayMode": "gradient",
+            "namePlacement": "top",
             "orientation": "horizontal",
             "reduceOptions": {
               "calcs": [
@@ -3629,7 +3697,7 @@
               "placement": "right"
             },
             "tooltip": {
-              "mode": "multi"
+              "mode": "single"
             }
           }
         }
