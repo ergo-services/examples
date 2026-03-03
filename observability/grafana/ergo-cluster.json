@@ -2480,6 +2480,160 @@
               }
             }
           ]
+        },
+        {
+          "id": 115,
+          "title": "Delivery Errors (Cluster Total)",
+          "description": "Cluster-wide message delivery error rate. Send errors occur when Send/SendAfter fails (process unknown, terminated, mailbox full). Call errors occur when Call fails to deliver the request. Local errors indicate issues with processes on the same node. Remote errors indicate connection or network-level failures. Non-zero rate requires investigation -- it may indicate process crashes, mailbox pressure, or network partitions.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 67
+          },
+          "targets": [
+            {
+              "expr": "sum(rate(ergo_send_errors_local_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Send Local"
+            },
+            {
+              "expr": "sum(rate(ergo_send_errors_remote_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Send Remote"
+            },
+            {
+              "expr": "sum(rate(ergo_call_errors_local_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Call Local"
+            },
+            {
+              "expr": "sum(rate(ergo_call_errors_remote_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Call Remote"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "err/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "fillOpacity": 20,
+                "gradientMode": "opacity"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Send Local"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "orange"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Send Remote"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "red"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Call Local"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "yellow"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Call Remote"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "dark-red"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          }
+        },
+        {
+          "id": 116,
+          "title": "Delivery Errors per Node",
+          "description": "Message delivery error rate per node. Shows send and call errors split by node. Helps identify which node is experiencing delivery failures -- a spike on a single node usually points to local process issues (crashes, mailbox overflow), while correlated spikes across nodes suggest a network or cluster-wide problem.",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 67
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_send_errors_local_total{node=~\"$node\"}[1m]) + rate(ergo_send_errors_remote_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} send"
+            },
+            {
+              "expr": "rate(ergo_call_errors_local_total{node=~\"$node\"}[1m]) + rate(ergo_call_errors_remote_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} call"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "err/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          }
         }
       ]
     },
@@ -3331,6 +3485,153 @@
             }
           },
           "description": "Byte rate between each pair of connected nodes. Identifies which specific node-to-node link is saturated or carrying the most data."
+        },
+        {
+          "id": 117,
+          "title": "Connected Nodes",
+          "description": "Number of connected remote nodes per node as a bar gauge. Shows cluster connectivity at a glance. A node with zero connections is isolated. Color indicates health: red (0) -- isolated, orange (1) -- degraded, yellow (2) -- partial, green (3+) -- healthy.",
+          "type": "bargauge",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 70
+          },
+          "targets": [
+            {
+              "expr": "ergo_connected_nodes_total{node=~\"$node\"}",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 1
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 2
+                  },
+                  {
+                    "color": "green",
+                    "value": 3
+                  }
+                ]
+              }
+            }
+          },
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "showUnfilled": true
+          }
+        },
+        {
+          "id": 118,
+          "title": "Connection Events",
+          "description": "Connection established rate, lost rate, and handshake error rate on one chart. In a stable cluster all three are zero. Established (green) and Lost (red) spikes indicate connection churn. Handshake Errors (orange) indicate bad incoming connections (wrong protocol, auth failures, incompatible versions).",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 70
+          },
+          "targets": [
+            {
+              "expr": "rate(ergo_connections_established_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} established"
+            },
+            {
+              "expr": "rate(ergo_connections_lost_total{node=~\"$node\"}[1m])",
+              "legendFormat": "{{node}} lost"
+            },
+            {
+              "expr": "sum by (node) (rate(ergo_acceptor_handshake_errors_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "{{node}} handshake errors"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "events/s",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": ".*established"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "green"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": ".*lost"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "red"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": ".*handshake errors"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "orange"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          }
         }
       ]
     }
