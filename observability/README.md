@@ -5,7 +5,7 @@ nodes run realistic workloads while three observability layers provide full visi
 
 - **Grafana dashboards** -- Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Two dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system) and **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles)
 - **Observer web UI** -- real-time process inspection, application trees, and network topology
-- **AI-powered diagnostics** -- an MCP server on cluster-node1 exposes 46 tools to Claude Code (or any MCP-compatible AI client), turning it into an interactive SRE that investigates the cluster through natural language conversation
+- **AI-powered diagnostics** -- an MCP server on cluster-node1 exposes 48 tools to Claude Code (or any MCP-compatible AI client), turning it into an interactive SRE that investigates the cluster through natural language conversation
 
 ## Scenario Applications
 
@@ -118,7 +118,7 @@ make clean    # Remove containers, images, and volumes
 
 Besides Grafana dashboards with historical metrics, this example demonstrates real-time
 interactive diagnostics via MCP (Model Context Protocol). The MCP application on cluster-node1
-exposes 46 tools covering processes, network, events, logging, debug profiling, and
+exposes 48 tools covering processes, network, events, logging, debug profiling, and
 real-time samplers. Combined with the `ergo-devops` agent, Claude Code becomes an
 interactive SRE that investigates the cluster through conversation.
 

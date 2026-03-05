@@ -3,17 +3,17 @@ module observability
 go 1.24.0
 
 require (
-	ergo.services/application/mcp v0.0.0-20260303161450-515028b26f7b
+	ergo.services/application/mcp v0.0.0-20260305212329-10430de2a5c3
 	ergo.services/application/observer v0.1.0
-	ergo.services/application/radar v0.0.0-20260303161450-515028b26f7b
-	ergo.services/ergo v1.999.321-0.20260303160737-6355d19a6de8
+	ergo.services/application/radar v0.0.0-20260305212329-10430de2a5c3
+	ergo.services/ergo v1.999.321-0.20260305211829-909f6f11d916
 	ergo.services/logger/colored v0.1.0
 	ergo.services/registrar/etcd v0.1.0
 )
 
 require (
-	ergo.services/actor/health v0.0.0-20260303161230-56b6eb764116 // indirect
-	ergo.services/actor/metrics v0.2.2-0.20260303161230-56b6eb764116 // indirect
+	ergo.services/actor/health v0.0.0-20260305212201-8634a257254b // indirect
+	ergo.services/actor/metrics v0.2.2-0.20260305212201-8634a257254b // indirect
 	ergo.services/meta/websocket v0.1.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -22,6 +22,7 @@ require (
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
+	github.com/google/pprof v0.0.0-20260302011040-a15ffb7f9dcc // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
