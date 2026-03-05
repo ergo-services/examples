@@ -2,8 +2,8 @@ ergo.services/actor/health v0.0.0-20260305212201-8634a257254b h1:/nBphGD4sVSTfz0
 ergo.services/actor/health v0.0.0-20260305212201-8634a257254b/go.mod h1:kZpT6IDcGic/6LK1v3ntLK5REcLS0b3wX8gEf1PBXPo=
 ergo.services/actor/metrics v0.2.2-0.20260305212201-8634a257254b h1:bT9dv3gMiFCtVG6di8w1tWjx5S2fatnwuAGl/ADlFks=
 ergo.services/actor/metrics v0.2.2-0.20260305212201-8634a257254b/go.mod h1:ly0cXPlL5KfI7+UV+fS1QA82/rKRnTv7N0GJWlDgGcg=
-ergo.services/application/mcp v0.0.0-20260305212329-10430de2a5c3 h1:CJGL5nQBpXXuG38QoOvZF7FlhZhZspnFF+NCGB227+8=
-ergo.services/application/mcp v0.0.0-20260305212329-10430de2a5c3/go.mod h1:mGRA9WHXqS1B1hJMod+09bCZmjiEIUNGBW0l4qGW0SU=
+ergo.services/application/mcp v0.0.0-20260305225126-d8948924cf56 h1:sBaLjUDP/CJt0LiOw5QJeZXw3+KcPBy61sg3ThhoBtU=
+ergo.services/application/mcp v0.0.0-20260305225126-d8948924cf56/go.mod h1:mGRA9WHXqS1B1hJMod+09bCZmjiEIUNGBW0l4qGW0SU=
 ergo.services/application/observer v0.1.0 h1:igJgDMgHNkY6BFBgrcsyEeJinZfRI1FRMGJcPy0wsv0=
 ergo.services/application/observer v0.1.0/go.mod h1:EK27V3/Ts/mN4RQanOuYJCZkrSqL4QHDvg1v2BEOd/g=
 ergo.services/application/radar v0.0.0-20260305212329-10430de2a5c3 h1:IRMQcDelExhLHpDLaTrcfb3klHOLEe0HGkP41DzxLcI=

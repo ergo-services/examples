@@ -3,7 +3,7 @@ module observability
 go 1.24.0
 
 require (
-	ergo.services/application/mcp v0.0.0-20260305212329-10430de2a5c3
+	ergo.services/application/mcp v0.0.0-20260305225126-d8948924cf56
 	ergo.services/application/observer v0.1.0
 	ergo.services/application/radar v0.0.0-20260305212329-10430de2a5c3
 	ergo.services/ergo v1.999.321-0.20260305211829-909f6f11d916

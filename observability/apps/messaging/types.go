@@ -2,10 +2,32 @@ package messaging
 
 import "ergo.services/ergo/net/edf"
 
+type OrderSide string
+
+type OrderTag struct {
+	Key   string
+	Value string
+}
+
+type TestOrder struct {
+	ID       string
+	Exchange string
+	Side     OrderSide
+	Price    float64
+	Amount   *float64
+	StopLoss *float64
+	Tags     []OrderTag
+	Fills    []*OrderTag
+	Metadata map[string]string
+	Notes    *string
+	Margin   bool
+}
+
 func init() {
-	if err := edf.RegisterTypeOf(MessagePayload{}); err != nil {
-		panic(err)
-	}
+	edf.RegisterTypeOf(MessagePayload{})
+	edf.RegisterTypeOf(OrderSide(""))
+	edf.RegisterTypeOf(OrderTag{})
+	edf.RegisterTypeOf(TestOrder{})
 }
 
 // MessagePayload is the async message sent from sender to remote worker pool
