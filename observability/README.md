@@ -20,9 +20,16 @@ Prometheus metrics (request rate and duration histogram) exposed on the Slowweb 
 
 ### Messaging (`apps/messaging`)
 
-Generates network traffic with variable payload sizes. A sender sends bursts of messages
-with random payloads (256 bytes to 10 KB) to a pool of workers on a remote node. Workers
-receive and discard the payloads.
+Generates network traffic with variable payload sizes. Two senders target a pool of workers
+on remote nodes:
+
+- **sender** -- bursts of 100-1000 small messages (256 bytes to 10 KB). Exercises normal
+  network messaging and per-node traffic metrics.
+- **bulk sender** -- bursts of 5-24 large messages (100-300 KB). Randomly toggles compression
+  per message. With compression off, messages exceed the fragment size (65 KB default) and
+  trigger fragmentation. With compression on, the repeating payload compresses well (ratio
+  8-12x), exercising the compression metrics. Together they populate all four Grafana panels:
+  network traffic, compression overview, compression ratio per node, and fragmentation.
 
 ### Lifecycle (`apps/lifecycle`)
 

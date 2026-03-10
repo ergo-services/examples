@@ -1,7 +1,7 @@
 package messaging
 
 import (
-	crand "crypto/rand"
+	"bytes"
 	"math/rand"
 	"sort"
 	"time"
@@ -22,7 +22,6 @@ func factoryBulkSender() gen.ProcessBehavior {
 
 func (s *bulkSender) Init(args ...any) error {
 	s.Log().Info("bulk sender started on %s", s.Node().Name())
-	s.SetCompression(true)
 	s.SendAfter(s.PID(), messageBulkBurst{}, startDelay+3*time.Second)
 	return nil
 }
@@ -71,10 +70,14 @@ func (s *bulkSender) doBurst() {
 	count := 5 + rand.Intn(20) // 5..24 large messages
 	to := gen.ProcessID{Name: poolName, Node: node}
 	for i := 0; i < count; i++ {
-		// 100KB..300KB -- large enough to trigger both compression and fragmentation
+		// 100KB..300KB -- large enough to trigger fragmentation
 		length := 100000 + rand.Intn(200001)
-		data := make([]byte, length)
-		crand.Read(data)
+		pattern := []byte("order_id:12345 status:active price:99.95 amount:1.5 exchange:binance ")
+		data := bytes.Repeat(pattern, length/len(pattern)+1)[:length]
+
+		// randomly toggle compression per message
+		s.SetCompression(rand.Intn(2) == 0)
+
 		msg := MessageBulkPayload{Data: data}
 		if err := s.Send(to, msg); err != nil {
 			s.Log().Warning("bulk sender: send error at %d: %s", i, err)

@@ -3558,7 +3558,7 @@
         },
         {
           "id": 123,
-          "title": "Compression Savings per Node",
+          "title": "Compression Ratio per Node",
           "type": "timeseries",
           "gridPos": {
             "h": 8,
@@ -3568,17 +3568,18 @@
           },
           "targets": [
             {
-              "expr": "sum by (node) (rate(ergo_remote_compressed_orig_bytes_sent_total{node=~\"$node\"}[1m]) - rate(ergo_remote_compressed_bytes_sent_total{node=~\"$node\"}[1m]))",
-              "legendFormat": "{{node}} saved"
+              "expr": "sum by (node) (rate(ergo_remote_compressed_orig_bytes_sent_total{node=~\"$node\"}[1m])) / clamp_min(sum by (node) (rate(ergo_remote_compressed_bytes_sent_total{node=~\"$node\"}[1m])), 1)",
+              "legendFormat": "{{node}}"
             }
           ],
           "fieldConfig": {
             "defaults": {
-              "unit": "Bps",
+              "unit": "x",
               "custom": {
                 "lineInterpolation": "smooth",
                 "lineWidth": 1
-              }
+              },
+              "min": 0
             }
           },
           "options": {
@@ -3587,7 +3588,7 @@
               "placement": "right"
             }
           },
-          "description": "Bytes per second saved by compression on each node. Shows which nodes benefit most from compression in absolute terms. Zero means compression is disabled or messages are below the compression threshold."
+          "description": "Compression ratio per node (original / compressed). Ratio ~1.0 means data is incompressible -- compression wastes CPU, consider disabling. Ratio 2x+ means compression is effective. Compare across nodes to identify which connections benefit."
         },
         {
           "id": 120,
