@@ -2813,7 +2813,7 @@
           },
           "targets": [
             {
-              "expr": "ergo_process_init_time_max_seconds{node=~\"$node\"}",
+              "expr": "sort_desc(ergo_process_init_time_max_seconds{node=~\"$node\"})",
               "legendFormat": "{{node}}"
             }
           ],
@@ -2847,7 +2847,7 @@
           },
           "options": {
             "displayMode": "gradient",
-            "namePlacement": "top",
+            "namePlacement": "left",
             "orientation": "horizontal",
             "reduceOptions": {
               "calcs": [
@@ -3494,6 +3494,192 @@
           "description": "Byte rate between each pair of connected nodes. Identifies which specific node-to-node link is saturated or carrying the most data."
         },
         {
+          "id": 122,
+          "title": "Compression Overview",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 70
+          },
+          "targets": [
+            {
+              "expr": "sum(rate(ergo_remote_compressed_orig_bytes_sent_total{node=~\"$node\"}[1m])) / clamp_min(sum(rate(ergo_remote_compressed_bytes_sent_total{node=~\"$node\"}[1m])), 1)",
+              "legendFormat": "Compression Ratio"
+            },
+            {
+              "expr": "sum(rate(ergo_remote_compressed_sent_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Compressed msg/s"
+            },
+            {
+              "expr": "sum(rate(ergo_remote_compressed_sent_total{node=~\"$node\"}[1m])) / clamp_min(sum(rate(ergo_remote_messages_out_total{node=~\"$node\"}[1m])), 1) * 100",
+              "legendFormat": "% Messages Compressed"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Compression Ratio" },
+                "properties": [
+                  { "id": "unit", "value": "x" },
+                  { "id": "custom.axisPlacement", "value": "left" }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Compressed msg/s" },
+                "properties": [
+                  { "id": "unit", "value": "ops" },
+                  { "id": "custom.axisPlacement", "value": "right" }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "% Messages Compressed" },
+                "properties": [
+                  { "id": "unit", "value": "percent" },
+                  { "id": "custom.axisPlacement", "value": "right" }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Compression effectiveness across the cluster. Ratio shows how much data is reduced (higher = better). Percentage shows what fraction of messages are compressed. A low percentage with high ratio means only large messages are compressed (expected). See https://docs.ergo.services/networking/network-stack for details."
+        },
+        {
+          "id": 123,
+          "title": "Compression Savings per Node",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 70
+          },
+          "targets": [
+            {
+              "expr": "sum by (node) (rate(ergo_remote_compressed_orig_bytes_sent_total{node=~\"$node\"}[1m]) - rate(ergo_remote_compressed_bytes_sent_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "{{node}} saved"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Bytes per second saved by compression on each node. Shows which nodes benefit most from compression in absolute terms. Zero means compression is disabled or messages are below the compression threshold."
+        },
+        {
+          "id": 120,
+          "title": "Fragmentation (Cluster Total)",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 78
+          },
+          "targets": [
+            {
+              "expr": "sum(rate(ergo_remote_fragments_sent_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Fragments Sent"
+            },
+            {
+              "expr": "sum(rate(ergo_remote_fragments_received_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Fragments Received"
+            },
+            {
+              "expr": "sum(rate(ergo_remote_fragment_messages_sent_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Messages Fragmented (sent)"
+            },
+            {
+              "expr": "sum(rate(ergo_remote_fragment_messages_received_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Messages Reassembled"
+            },
+            {
+              "expr": "sum(rate(ergo_remote_fragment_timeouts_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "Assembly Timeouts"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Cluster-wide fragment rate. Shows how many messages are being fragmented and reassembled. Assembly timeouts indicate incomplete deliveries (sender crash, connection drop). See https://docs.ergo.services/networking/network-stack#message-fragmentation for details."
+        },
+        {
+          "id": 121,
+          "title": "Fragmentation per Node",
+          "type": "timeseries",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 78
+          },
+          "targets": [
+            {
+              "expr": "sum by (node) (rate(ergo_remote_fragment_messages_sent_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "{{node}} fragmented (sent)"
+            },
+            {
+              "expr": "sum by (node) (rate(ergo_remote_fragment_messages_received_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "{{node}} reassembled"
+            },
+            {
+              "expr": "sum by (node) (rate(ergo_remote_fragment_timeouts_total{node=~\"$node\"}[1m]))",
+              "legendFormat": "{{node}} timeouts"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "lineInterpolation": "smooth",
+                "lineWidth": 1
+              }
+            }
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right"
+            }
+          },
+          "description": "Per-node fragmentation activity. Shows which nodes are sending or receiving fragmented messages. Timeouts on a specific node may indicate that node is losing connections mid-transfer."
+        },
+        {
           "id": 119,
           "title": "Connectivity Strength",
           "description": "Percentage of full mesh achieved across the cluster. 100% = every node connected to every other. Cluster size is based on nodes reporting metrics.",
@@ -3502,7 +3688,7 @@
             "h": 8,
             "w": 2,
             "x": 0,
-            "y": 70
+            "y": 86
           },
           "targets": [
             {
@@ -3560,7 +3746,7 @@
             "h": 8,
             "w": 10,
             "x": 2,
-            "y": 70
+            "y": 86
           },
           "targets": [
             {
@@ -3600,7 +3786,7 @@
           },
           "options": {
             "displayMode": "gradient",
-            "namePlacement": "top",
+            "namePlacement": "left",
             "orientation": "horizontal",
             "reduceOptions": {
               "calcs": [
@@ -3619,7 +3805,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 70
+            "y": 86
           },
           "targets": [
             {

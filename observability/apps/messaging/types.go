@@ -25,6 +25,7 @@ type TestOrder struct {
 
 func init() {
 	edf.RegisterTypeOf(MessagePayload{})
+	edf.RegisterTypeOf(MessageBulkPayload{})
 	edf.RegisterTypeOf(OrderSide(""))
 	edf.RegisterTypeOf(OrderTag{})
 	edf.RegisterTypeOf(TestOrder{})
@@ -37,3 +38,11 @@ type MessagePayload struct {
 
 // messageBurst is an internal trigger for the sender to fire a burst
 type messageBurst struct{}
+
+// MessageBulkPayload is sent by bulk sender -- large enough to trigger fragmentation
+type MessageBulkPayload struct {
+	Data []byte
+}
+
+// messageBulkBurst is an internal trigger for the bulk sender
+type messageBulkBurst struct{}

@@ -21,6 +21,8 @@ func (w *worker) HandleMessage(from gen.PID, message any) error {
 	switch m := message.(type) {
 	case MessagePayload:
 		w.Log().Debug("received payload %d bytes from %s", len(m.Data), from)
+	case MessageBulkPayload:
+		w.Log().Debug("received bulk payload %d bytes from %s", len(m.Data), from)
 	}
 	return nil
 }

@@ -28,6 +28,10 @@ func (s *messagingSup) Init(args ...any) (act.SupervisorSpec, error) {
 				Name:    "messaging_sender",
 				Factory: factorySender,
 			},
+			{
+				Name:    "messaging_bulk_sender",
+				Factory: factoryBulkSender,
+			},
 		},
 	}, nil
 }
