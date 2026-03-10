@@ -75,7 +75,7 @@
       "type": "stat",
       "gridPos": {
         "h": 4,
-        "w": 4,
+        "w": 2,
         "x": 8,
         "y": 0
       },
@@ -109,6 +109,47 @@
         }
       },
       "description": "Zombie processes -- terminated abnormally and not properly cleaned up. Non-zero value requires investigation. Green when 0, red when 1 or more."
+    },
+    {
+      "id": 124,
+      "title": "Stuck",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 2,
+        "x": 10,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "count(ergo_process_liveness_bottom{node=~\"$node\"} < 0.001) OR vector(0)",
+          "legendFormat": "Stuck"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        }
+      },
+      "description": "Processes with blocked callbacks (liveness score < 0.001). Indicates actors calling blocking operations (mutex, channel, IO, HTTP) inside message handlers. Green when 0, red when 1 or more. Requires -tags=latency."
     },
     {
       "id": 4,
@@ -747,6 +788,142 @@
       "description": "Top-N processes by mailbox latency across the cluster, sorted descending. Directly answers which process is the bottleneck. Columns include Application, Behavior, and Name so you can identify the actor type. Requires -tags=latency."
     },
     {
+      "id": 125,
+      "title": "Liveness Alerts (stuck callbacks)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "targets": [
+        {
+          "expr": "count(ergo_process_liveness_bottom{node=~\"$node\"} < 0.001) OR vector(0)",
+          "legendFormat": "Stuck (< 0.001)"
+        },
+        {
+          "expr": "count(ergo_process_liveness_bottom{node=~\"$node\"} < 0.01 and ergo_process_liveness_bottom{node=~\"$node\"} >= 0.001) OR vector(0)",
+          "legendFormat": "Suspect (< 0.01)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "decimals": 0,
+          "custom": {
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 2,
+            "fillOpacity": 20
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Stuck (< 0.001)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Suspect (< 0.01)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "description": "Number of processes with low liveness score over time. Red (score < 0.001): handler blocked on a synchronous operation (mutex, channel, IO), cannot proceed to the next message. Orange (score < 0.01): handler slowing down, latency building up. Both at zero = healthy. Requires -tags=latency."
+    },
+    {
+      "id": 126,
+      "title": "Liveness Details (stuck callbacks)",
+      "type": "table",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "targets": [
+        {
+          "expr": "ergo_process_liveness_bottom{node=~\"$node\"}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "endpoint": true,
+              "job": true,
+              "prometheus": true
+            },
+            "indexByName": {
+              "application": 0,
+              "behavior": 1,
+              "name": 2,
+              "pid": 3,
+              "node": 4,
+              "Value": 5
+            },
+            "renameByName": {
+              "application": "Application",
+              "behavior": "Behavior",
+              "name": "Name",
+              "pid": "PID",
+              "node": "Node",
+              "Value": "Liveness"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Liveness",
+                "desc": false
+              }
+            ]
+          }
+        }
+      ],
+      "fieldConfig": {},
+      "description": "Processes with the lowest liveness score. Score = RunningTime / (Uptime * MailboxLatency). When a handler is blocked, RunningTime stops growing while latency increases, driving the score down. High = healthy, near zero = stuck. Zombies excluded. Sorted ascending -- worst at top. Requires -tags=latency."
+    },
+    {
       "id": 70,
       "type": "row",
       "title": "Mailbox Depth",
@@ -755,7 +932,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 33
       }
     },
     {
@@ -766,7 +943,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 26
+        "y": 34
       },
       "targets": [
         {
@@ -805,7 +982,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 26
+        "y": 34
       },
       "targets": [
         {
@@ -1032,7 +1209,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 42
       },
       "targets": [
         {
@@ -1102,7 +1279,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 50
       },
       "panels": [
         {
@@ -1752,13 +1929,13 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 51
       },
       "panels": [
         {
           "id": 85,
           "title": "Message Throughput (Cluster Total)",
-          "description": "Cluster-wide message throughput and wakeup rate. In (green): messages received. Out (blue): messages sent. Wakeups (purple dashed): process scheduling frequency. In a fully monitored cluster (metrics actor on every node), In and Out should be approximately balanced. A small imbalance is normal due to framework-internal messages (exit signals, down notifications) that increment In without a corresponding Out. Persistent significant imbalance indicates nodes without metrics collection: Out > In means messages are sent to unmonitored nodes, In > Out means unmonitored nodes are sending messages into the cluster. The gap between In and Wakeups shows drain effect: when they track together -- spare capacity, when In >> Wakeups -- processes batch under load.",
+          "description": "Cluster-wide message throughput and wakeup rate. In (green): total messages received by all processes. Out (blue): total messages sent by all processes. Wakeups (purple dashed): process scheduling frequency. In typically exceeds Out due to event fanout -- one publish delivers to many local subscribers, each counting as a separate received message. The gap between In and Wakeups shows drain effect: when they track together -- spare capacity, when In >> Wakeups -- processes batch messages under load.",
           "type": "timeseries",
           "gridPos": {
             "h": 8,
@@ -2646,7 +2823,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 52
       },
       "panels": [
         {
@@ -2945,7 +3122,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 53
       },
       "panels": [
         {
@@ -3097,7 +3274,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 54
       },
       "panels": [
         {
@@ -3260,7 +3437,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 55
       },
       "panels": [
         {
@@ -3302,7 +3479,7 @@
               "mode": "multi"
             }
           },
-          "description": "Cluster-wide inbound and outbound message rate. Provides a high-level view of cluster communication intensity. Sudden drops may indicate network partitions or node failures. See https://docs.ergo.services/networking/network-stack for the network architecture."
+          "description": "Cluster-wide inbound and outbound message rate across all node connections. In and Out lines may differ due to event fanout, burst timing, and asymmetric workloads -- this is normal. A sustained gap growing over time may indicate message loss. Sudden drops may indicate network partitions or node failures."
         },
         {
           "id": 31,
@@ -3526,24 +3703,51 @@
             },
             "overrides": [
               {
-                "matcher": { "id": "byName", "options": "Compression Ratio" },
+                "matcher": {
+                  "id": "byName",
+                  "options": "Compression Ratio"
+                },
                 "properties": [
-                  { "id": "unit", "value": "x" },
-                  { "id": "custom.axisPlacement", "value": "right" }
+                  {
+                    "id": "unit",
+                    "value": "x"
+                  },
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
+                  }
                 ]
               },
               {
-                "matcher": { "id": "byName", "options": "Compressed msg/s" },
+                "matcher": {
+                  "id": "byName",
+                  "options": "Compressed msg/s"
+                },
                 "properties": [
-                  { "id": "unit", "value": "cps" },
-                  { "id": "custom.axisPlacement", "value": "left" }
+                  {
+                    "id": "unit",
+                    "value": "cps"
+                  },
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "left"
+                  }
                 ]
               },
               {
-                "matcher": { "id": "byName", "options": "% Messages Compressed" },
+                "matcher": {
+                  "id": "byName",
+                  "options": "% Messages Compressed"
+                },
                 "properties": [
-                  { "id": "unit", "value": "percent" },
-                  { "id": "custom.axisPlacement", "value": "right" }
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
+                  }
                 ]
               }
             ]

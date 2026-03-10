@@ -1,13 +1,13 @@
 ergo.services/actor/health v0.0.0-20260310144405-e07a5309c0ae h1:bCp6CWmvy6zG8gYoCiD9jD2SVHSCDBFaVDYB/RqiR4I=
 ergo.services/actor/health v0.0.0-20260310144405-e07a5309c0ae/go.mod h1:F9FgeaY9cLRsSFMmGpr/bdJExrgDIhopKFtEhRX2AHM=
-ergo.services/actor/metrics v0.2.2-0.20260310144405-e07a5309c0ae h1:YJ3/UOrxQc1WzEeeTs5a4G2B1245hLYLYa4KO0kumpw=
-ergo.services/actor/metrics v0.2.2-0.20260310144405-e07a5309c0ae/go.mod h1:TnNbDtcyOMkR8vOECjSeIbVScFlkallRDgfyjiv0Wwo=
+ergo.services/actor/metrics v0.2.2-0.20260310204436-cf1b761e1e18 h1:OjeM+kMGyUL/miqOp9wxpiCHh6eAt1cyvmOXcyCSzIg=
+ergo.services/actor/metrics v0.2.2-0.20260310204436-cf1b761e1e18/go.mod h1:TnNbDtcyOMkR8vOECjSeIbVScFlkallRDgfyjiv0Wwo=
 ergo.services/application/mcp v0.0.0-20260310144611-bcf83e97036a h1:VtBIdu0LSaZ+DpJ6G5cjt81hFPG2LgHwsVVdc6SOBUI=
 ergo.services/application/mcp v0.0.0-20260310144611-bcf83e97036a/go.mod h1:mnJIT+WDSoRazS1H71Za0PygxJWWlKZS9NzGtKjCm80=
 ergo.services/application/observer v0.1.0 h1:igJgDMgHNkY6BFBgrcsyEeJinZfRI1FRMGJcPy0wsv0=
 ergo.services/application/observer v0.1.0/go.mod h1:EK27V3/Ts/mN4RQanOuYJCZkrSqL4QHDvg1v2BEOd/g=
-ergo.services/application/radar v0.0.0-20260310144611-bcf83e97036a h1:3rttIqyNiEORWVgge4w/Tg8Dn07z+hznGn6SnO/d8EE=
-ergo.services/application/radar v0.0.0-20260310144611-bcf83e97036a/go.mod h1:8aeiEkyEdWqZFbLZLHNYJ+XCjgi8SejXoVRQbbKCPYc=
+ergo.services/application/radar v0.0.0-20260310204532-02a89960ddf6 h1:1aTisNoxc9+j7grFjj3vAQRWEVDYNVkFMWiCxkvWSXk=
+ergo.services/application/radar v0.0.0-20260310204532-02a89960ddf6/go.mod h1:u/deGF9HtOZ0M4gItJyhccuEMOC303KsjDaf5forKcU=
 ergo.services/ergo v1.999.321-0.20260310144222-83254b31cb81 h1:Il3icnygAhhjYLrj5L9VC21d/4Dj1Xdvg4HIzF2ussc=
 ergo.services/ergo v1.999.321-0.20260310144222-83254b31cb81/go.mod h1:bLQ6PoO6Mz/8gVuzvPv3xfMfo1P9w6rZV1WnMXMeMdg=
 ergo.services/logger/colored v0.1.0 h1:jbibOaIVZnL+mUsEeyXzzjMaNFsNDcTd+8wdL6cPwu8=
