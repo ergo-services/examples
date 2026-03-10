@@ -3529,14 +3529,14 @@
                 "matcher": { "id": "byName", "options": "Compression Ratio" },
                 "properties": [
                   { "id": "unit", "value": "x" },
-                  { "id": "custom.axisPlacement", "value": "left" }
+                  { "id": "custom.axisPlacement", "value": "right" }
                 ]
               },
               {
                 "matcher": { "id": "byName", "options": "Compressed msg/s" },
                 "properties": [
-                  { "id": "unit", "value": "ops" },
-                  { "id": "custom.axisPlacement", "value": "right" }
+                  { "id": "unit", "value": "cps" },
+                  { "id": "custom.axisPlacement", "value": "left" }
                 ]
               },
               {
@@ -3549,6 +3549,10 @@
             ]
           },
           "options": {
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            },
             "legend": {
               "displayMode": "table",
               "placement": "right"
@@ -3624,7 +3628,7 @@
           ],
           "fieldConfig": {
             "defaults": {
-              "unit": "ops",
+              "unit": "cps",
               "custom": {
                 "lineInterpolation": "smooth",
                 "lineWidth": 1
@@ -3632,12 +3636,16 @@
             }
           },
           "options": {
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            },
             "legend": {
               "displayMode": "table",
               "placement": "right"
             }
           },
-          "description": "Cluster-wide fragment rate. Shows how many messages are being fragmented and reassembled. Assembly timeouts indicate incomplete deliveries (sender crash, connection drop). See https://docs.ergo.services/networking/network-stack#message-fragmentation for details."
+          "description": "Cluster-wide fragmentation rate. Values are counts per second: individual fragments sent/received, messages fragmented/reassembled, and assembly timeouts. Shows how many messages are being fragmented and reassembled. Assembly timeouts indicate incomplete deliveries (sender crash, connection drop). See https://docs.ergo.services/networking/network-stack#message-fragmentation for details."
         },
         {
           "id": 121,
@@ -3665,7 +3673,7 @@
           ],
           "fieldConfig": {
             "defaults": {
-              "unit": "ops",
+              "unit": "cps",
               "custom": {
                 "lineInterpolation": "smooth",
                 "lineWidth": 1
@@ -3678,7 +3686,7 @@
               "placement": "right"
             }
           },
-          "description": "Per-node fragmentation activity. Shows which nodes are sending or receiving fragmented messages. Timeouts on a specific node may indicate that node is losing connections mid-transfer."
+          "description": "Per-node fragmentation activity. Values are messages per second: how many messages were fragmented for sending, reassembled on receive, or timed out waiting for fragments. Shows which nodes are sending or receiving fragmented messages. Timeouts on a specific node may indicate that node is losing connections mid-transfer."
         },
         {
           "id": 119,

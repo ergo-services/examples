@@ -74,6 +74,11 @@ func (s *bulkSender) doBurst() {
 		length := 100000 + rand.Intn(200001)
 		pattern := []byte("order_id:12345 status:active price:99.95 amount:1.5 exchange:binance ")
 		data := bytes.Repeat(pattern, length/len(pattern)+1)[:length]
+		// random noise tail (10-80% of data) for varied compression ratio
+		noiseStart := length * (1 + rand.Intn(8)) / 10 // 10%..80% structured, rest is noise
+		for j := noiseStart; j < length; j++ {
+			data[j] = byte(rand.Intn(256))
+		}
 
 		// randomly toggle compression per message
 		s.SetCompression(rand.Intn(2) == 0)
