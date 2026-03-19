@@ -3,15 +3,15 @@
 A deliberately stressed five-node Ergo cluster designed to generate observable signal across
 every layer of the framework. All scenario applications run continuously, keeping the cluster
 under load at all times: mailbox latency spikes, high-volume network traffic, constant process
-churn, and a full spread of event utilization states. The goal is not a quiet healthy cluster --
+churn, and a full spread of event utilization states. The goal is not a quiet healthy cluster;
 it is a cluster that always has something worth investigating, so that every observability tool
 has meaningful data to work with.
 
 Three observability layers provide full visibility:
 
-- **Grafana dashboards** -- Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Two dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system) and **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles)
-- **Observer web UI** -- real-time process inspection, application trees, and network topology
-- **AI-powered diagnostics** -- an MCP server on node1 exposes 48 tools to Claude Code (or any MCP-compatible AI client), turning it into an interactive SRE that investigates the cluster through natural language conversation
+- **Grafana dashboards:** Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Two dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system) and **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles)
+- **Observer web UI:** real-time process inspection, application trees, and network topology
+- **AI-powered diagnostics:** an MCP server on node1 exposes 48 tools to Claude Code (or any MCP-compatible AI client), turning it into an interactive SRE that investigates the cluster through natural language conversation
 
 ## Scenario Applications
 
@@ -29,9 +29,9 @@ Prometheus metrics (request rate and duration histogram) exposed on the Slowweb 
 Generates network traffic with variable payload sizes. Two senders target a pool of workers
 on remote nodes:
 
-- **sender** -- bursts of 100-1000 small messages (256 bytes to 10 KB). Exercises normal
+- **sender:** bursts of 100-1000 small messages (256 bytes to 10 KB). Exercises normal
   network messaging and per-node traffic metrics.
-- **bulk sender** -- bursts of 5-24 large messages (100-300 KB). Randomly toggles compression
+- **bulk sender:** bursts of 5-24 large messages (100-300 KB). Randomly toggles compression
   per message. With compression off, messages exceed the fragment size (65 KB default) and
   trigger fragmentation. With compression on, the repeating payload compresses well (ratio
   8-12x), exercising the compression metrics. Together they populate all four Grafana panels:
@@ -41,7 +41,7 @@ on remote nodes:
 
 Generates process spawn/terminate churn. A SOFO supervisor continuously starts children
 that terminate after a random delay and get restarted, creating constant process activity.
-A separate `zombie_maker` actor creates one zombie process per node -- a child whose
+A separate `zombie_maker` actor creates one zombie process per node, a child whose
 callback never returns, useful for testing zombie detection.
 
 ### Events (`apps/events`)
@@ -51,7 +51,7 @@ distributed across categories:
 
 | Category | Behavior |
 |----------|----------|
-| active | Publishing with subscribers -- normal operation |
+| active | Publishing with subscribers, normal operation |
 | idle | Registered but no publishes, no subscribers |
 | no_subscribers | Publishing but nobody is listening |
 | on_demand | Starts publishing only when the first subscriber appears |
@@ -86,8 +86,8 @@ graph TB
 ```
 
 Each node runs the same set of applications:
-- `radar` -- Prometheus metrics exporter (`/metrics`, `/health/live`, `/health/ready`)
-- `mcp` -- MCP server (node1 only exposes port 9922)
+- `radar`: Prometheus metrics exporter (`/metrics`, `/health/live`, `/health/ready`)
+- `mcp`: MCP server (node1 only exposes port 9922)
 - `latency_scenario`, `messaging_scenario`, `lifecycle_scenario`, `events_scenario`
 
 A separate `observer` node joins the cluster and provides a web UI on port 9911
@@ -137,7 +137,7 @@ exposes 48 tools covering processes, network, events, logging, debug profiling, 
 real-time samplers. Combined with the `ergo-devops` agent, Claude Code becomes an
 interactive SRE that investigates the cluster through conversation.
 
-The MCP server acts as a cluster proxy -- every tool accepts an optional `node` parameter.
+The MCP server acts as a cluster proxy; every tool accepts an optional `node` parameter.
 When specified, the request is forwarded to the remote node via native Ergo inter-node
 protocol. One MCP endpoint provides access to all 5 nodes.
 
@@ -238,7 +238,7 @@ across all nodes.
 show log message counts by level for all nodes on demo-cluster
 ```
 
-Presents a table with debug/info/warning/error/panic counts per node -- useful
+Presents a table with debug/info/warning/error/panic counts per node, useful
 for spotting error storms.
 
 #### Process diagnostics
@@ -247,7 +247,7 @@ for spotting error storms.
 find all zombie processes on demo-cluster
 ```
 
-Finds one zombie per node -- the `lifecycle.zombieChild` stuck in
+Finds one zombie per node: the `lifecycle.zombieChild` stuck in
 `processPayloadDecompression`. Reports PIDs, parent processes, and uptime.
 
 ```
@@ -275,7 +275,7 @@ spawn/terminate churn.
 are there any restart loops on demo-cluster?
 ```
 
-Finds recently spawned `lifecycle.child` processes -- expected behavior from the
+Finds recently spawned `lifecycle.child` processes, expected behavior from the
 SOFO supervisor with permanent restart strategy.
 
 ```
@@ -333,21 +333,21 @@ no_publishing) and reports the distribution.
 are there any events publishing to void on demo-cluster?
 ```
 
-Finds evt_12, evt_13, evt_14 -- publishers that produce messages with zero
+Finds evt_12, evt_13, evt_14, publishers that produce messages with zero
 subscribers by design.
 
 ```
 which events have the most subscribers on demo-cluster?
 ```
 
-Finds evt_0..evt_9 with 40-60 subscribers each -- the active events from the
+Finds evt_0..evt_9 with 40-60 subscribers each, the active events from the
 events scenario.
 
 ```
 are there events with subscribers but no publishing on demo-cluster?
 ```
 
-Finds evt_17, evt_18, evt_19 -- events with 10-17 waiting subscribers but zero
+Finds evt_17, evt_18, evt_19, events with 10-17 waiting subscribers but zero
 publications.
 
 ```
@@ -369,7 +369,7 @@ Starts a passive sampler that captures every publication in real time.
 investigate mailbox latency spikes on demo-cluster
 ```
 
-During latency bursts, `latency_worker` processes show measurable latency --
+During latency bursts, `latency_worker` processes show measurable latency;
 the agent correlates mailbox depth, drain ratio, and running time to identify
 the root cause.
 
@@ -377,7 +377,7 @@ the root cause.
 which processes have the highest drain ratio on demo-cluster?
 ```
 
-High drain means the process handles many messages per wakeup -- indicates burst
+High drain means the process handles many messages per wakeup, indicates burst
 processing under load.
 
 ```
@@ -390,14 +390,14 @@ Compares gc_cpu_percent, last_gc_pause, heap_alloc, and num_gc across the cluste
 profile heap allocations on node2@cluster-host2
 ```
 
-Returns top allocators sorted by cumulative bytes -- useful for finding
+Returns top allocators sorted by cumulative bytes, useful for finding
 memory-heavy code paths.
 
 ```
 show goroutine count across all nodes on demo-cluster
 ```
 
-Compares goroutine counts -- a growing count indicates a goroutine leak, stable
+Compares goroutine counts: a growing count indicates a goroutine leak, stable
 count means healthy.
 
 ```
@@ -422,7 +422,7 @@ detect trends in process counts, memory, and error rates.
 track top 5 mailbox hotspots on demo-cluster every 2 seconds for 1 minute
 ```
 
-Builds a timeline of mailbox pressure -- shows latency bursts coming and going
+Builds a timeline of mailbox pressure, shows latency bursts coming and going
 as senders alternate targets.
 
 ```
@@ -469,7 +469,7 @@ Lists all running samplers with their status, remaining time, and buffer usage.
 read new results from sampler <id> since sequence 5
 ```
 
-Incremental read -- returns only entries newer than the given sequence number.
+Incremental read, returns only entries newer than the given sequence number.
 
 ```
 stop sampler <id>
