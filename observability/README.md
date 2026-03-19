@@ -1,15 +1,21 @@
 # Observability Example
 
-A demo project that shows how to monitor an Ergo Framework cluster in production. Five
-nodes run realistic workloads while three observability layers provide full visibility:
+A deliberately stressed five-node Ergo cluster designed to generate observable signal across
+every layer of the framework. All scenario applications run continuously, keeping the cluster
+under load at all times: mailbox latency spikes, high-volume network traffic, constant process
+churn, and a full spread of event utilization states. The goal is not a quiet healthy cluster --
+it is a cluster that always has something worth investigating, so that every observability tool
+has meaningful data to work with.
+
+Three observability layers provide full visibility:
 
 - **Grafana dashboards** -- Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Two dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system) and **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles)
 - **Observer web UI** -- real-time process inspection, application trees, and network topology
-- **AI-powered diagnostics** -- an MCP server on cluster-node1 exposes 48 tools to Claude Code (or any MCP-compatible AI client), turning it into an interactive SRE that investigates the cluster through natural language conversation
+- **AI-powered diagnostics** -- an MCP server on node1 exposes 48 tools to Claude Code (or any MCP-compatible AI client), turning it into an interactive SRE that investigates the cluster through natural language conversation
 
 ## Scenario Applications
 
-Each node runs four scenario applications that exercise different aspects of the framework metrics.
+Each node runs four scenario applications that keep the cluster continuously stressed.
 
 ### Latency (`apps/latency`)
 
@@ -64,11 +70,11 @@ graph TB
     service discovery")]
 
     subgraph Cluster["Cluster (full mesh)"]
-        cn1["demo@cluster-node1"]
-        cn2["demo@cluster-node2"]
-        cn3["demo@cluster-node3"]
-        cn4["demo@cluster-node4"]
-        cn5["demo@cluster-node5"]
+        cn1["node1@cluster-host1"]
+        cn2["node2@cluster-host2"]
+        cn3["node3@cluster-host3"]
+        cn4["node4@cluster-host4"]
+        cn5["node5@cluster-host5"]
     end
 
     etcd -. registrar .-> Cluster
@@ -81,14 +87,14 @@ graph TB
 
 Each node runs the same set of applications:
 - `radar` -- Prometheus metrics exporter (`/metrics`, `/health/live`, `/health/ready`)
-- `mcp` -- MCP server (cluster-node1 only exposes port 9922)
+- `mcp` -- MCP server (node1 only exposes port 9922)
 - `latency_scenario`, `messaging_scenario`, `lifecycle_scenario`, `events_scenario`
 
 A separate `observer` node joins the cluster and provides a web UI on port 9911
 for real-time process inspection, application trees, and network topology.
 
 Nodes start sequentially via Docker healthcheck dependencies:
-cluster-node1 -> cluster-node2 -> cluster-node3 -> cluster-node4 -> cluster-node5.
+node1 -> node2 -> node3 -> node4 -> node5.
 
 ## Requirements
 
@@ -107,8 +113,10 @@ make up
 | Observer   | http://localhost:9911         |               |
 | MCP        | http://localhost:9922/mcp     |               |
 
-Open Grafana, navigate to the **Ergo Cluster** dashboard.
-Open Observer for real-time process inspection, application trees, and network topology.
+Open Grafana, navigate to the **Ergo Cluster** dashboard. Within a minute of startup,
+all panels will show live data: latency spikes, network bursts, process churn, and
+event traffic. Open Observer for real-time process inspection, application trees,
+and network topology.
 
 ## Commands
 
@@ -124,7 +132,7 @@ make clean    # Remove containers, images, and volumes
 ## AI-Powered Cluster Diagnostics (MCP)
 
 Besides Grafana dashboards with historical metrics, this example demonstrates real-time
-interactive diagnostics via MCP (Model Context Protocol). The MCP application on cluster-node1
+interactive diagnostics via MCP (Model Context Protocol). The MCP application on node1
 exposes 48 tools covering processes, network, events, logging, debug profiling, and
 real-time samplers. Combined with the `ergo-devops` agent, Claude Code becomes an
 interactive SRE that investigates the cluster through conversation.
@@ -214,7 +222,7 @@ Shows messages in/out, bytes transferred, connection uptime for every peer link.
 Helps spot unbalanced traffic or flapping connections.
 
 ```
-list all applications running on demo@cluster-node3
+list all applications running on node3@cluster-host3
 ```
 
 Shows all 7 applications with their mode, uptime, and process counts.
@@ -243,7 +251,7 @@ Finds one zombie per node -- the `lifecycle.zombieChild` stuck in
 `processPayloadDecompression`. Reports PIDs, parent processes, and uptime.
 
 ```
-show me the stack trace of the zombie process on demo@cluster-node1
+show me the stack trace of the zombie process on node1@cluster-host1
 ```
 
 Displays the goroutine dump with `processPayloadDecompression` visible in the
@@ -271,7 +279,7 @@ Finds recently spawned `lifecycle.child` processes -- expected behavior from the
 SOFO supervisor with permanent restart strategy.
 
 ```
-show me the process tree of lifecycle_scenario on demo@cluster-node1
+show me the process tree of lifecycle_scenario on node1@cluster-host1
 ```
 
 Displays the full supervision tree: application -> supervisor -> workers, with
@@ -287,13 +295,13 @@ Returns messages in/out, bytes transferred, connection uptime, and pool size for
 every peer link. Helps spot unbalanced traffic or dead connections.
 
 ```
-is demo@cluster-node4 connected to all other nodes?
+is node4@cluster-host4 connected to all other nodes?
 ```
 
 Compares discovered vs connected nodes and reports any missing connections.
 
 ```
-show connection details between demo@cluster-node1 and demo@cluster-node3
+show connection details between node1@cluster-host1 and node3@cluster-host3
 ```
 
 Returns protocol version, pool size, connection uptime, and per-connection byte
@@ -343,14 +351,14 @@ Finds evt_17, evt_18, evt_19 -- events with 10-17 waiting subscribers but zero
 publications.
 
 ```
-show me details of evt_0 on demo@cluster-node1
+show me details of evt_0 on node1@cluster-host1
 ```
 
 Returns the producer PID, subscriber list, publication count, and delivery
 statistics.
 
 ```
-capture events from evt_0 on demo@cluster-node1 for 30 seconds
+capture events from evt_0 on node1@cluster-host1 for 30 seconds
 ```
 
 Starts a passive sampler that captures every publication in real time.
@@ -379,7 +387,7 @@ show me GC pressure across all nodes on demo-cluster
 Compares gc_cpu_percent, last_gc_pause, heap_alloc, and num_gc across the cluster.
 
 ```
-profile heap allocations on demo@cluster-node2
+profile heap allocations on node2@cluster-host2
 ```
 
 Returns top allocators sorted by cumulative bytes -- useful for finding
@@ -393,7 +401,7 @@ Compares goroutine counts -- a growing count indicates a goroutine leak, stable
 count means healthy.
 
 ```
-inspect latency_worker on demo@cluster-node2, it seems overloaded
+inspect latency_worker on node2@cluster-host2, it seems overloaded
 ```
 
 Shows mailbox depth, drain ratio, running time, links, monitors, and
@@ -418,14 +426,14 @@ Builds a timeline of mailbox pressure -- shows latency bursts coming and going
 as senders alternate targets.
 
 ```
-poll the goroutine of latency_worker on demo@cluster-node1 until it wakes up
+poll the goroutine of latency_worker on node1@cluster-host1 until it wakes up
 ```
 
 Sleeping processes park their goroutine so it is not visible in a single dump.
 The sampler retries until the process wakes up and the goroutine becomes visible.
 
 ```
-watch runtime stats on demo@cluster-node3 for 10 minutes, use buffer size 512
+watch runtime stats on node3@cluster-host3 for 10 minutes, use buffer size 512
 ```
 
 Larger buffer retains more history for long-running sessions. Reports heap growth
@@ -439,13 +447,13 @@ Starts a passive sampler that captures log messages by level as they are emitted
 Finds lifecycle child termination errors and zombie maker messages.
 
 ```
-subscribe to evt_0 on demo@cluster-node1 for 30 seconds
+subscribe to evt_0 on node1@cluster-host1 for 30 seconds
 ```
 
 Captures every event publication in real time.
 
 ```
-capture warning logs and evt_5 events on demo@cluster-node1 for 1 minute, buffer 1024
+capture warning logs and evt_5 events on node1@cluster-host1 for 1 minute, buffer 1024
 ```
 
 Captures both log messages and event publications in a single sampler with a

@@ -7,6 +7,7 @@ import (
 
 	"ergo.services/ergo"
 	"ergo.services/ergo/gen"
+	"ergo.services/ergo/lib"
 
 	"ergo.services/application/mcp"
 	"ergo.services/application/radar"
@@ -22,7 +23,7 @@ import (
 func main() {
 	nodeName := os.Getenv("NODE_NAME")
 	if nodeName == "" {
-		nodeName = "demo@cluster-node2"
+		nodeName = fmt.Sprintf("node%d@%s", 2, lib.GetHostname())
 	}
 
 	registrar, err := etcd.Create(etcd.Options{

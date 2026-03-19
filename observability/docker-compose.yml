@@ -68,11 +68,11 @@ services:
       args:
         NODE_CMD: node1
     container_name: cluster-node1
-    hostname: cluster-node1
+    hostname: cluster-host1
     ports:
       - "9922:9922"
     environment:
-      - NODE_NAME=demo@cluster-node1
+      - NODE_NAME=node1@cluster-host1
     depends_on:
       etcd:
         condition: service_healthy
@@ -93,9 +93,9 @@ services:
       args:
         NODE_CMD: node2
     container_name: cluster-node2
-    hostname: cluster-node2
+    hostname: cluster-host2
     environment:
-      - NODE_NAME=demo@cluster-node2
+      - NODE_NAME=node2@cluster-host2
     depends_on:
       etcd:
         condition: service_healthy
@@ -116,9 +116,9 @@ services:
       args:
         NODE_CMD: node3
     container_name: cluster-node3
-    hostname: cluster-node3
+    hostname: cluster-host3
     environment:
-      - NODE_NAME=demo@cluster-node3
+      - NODE_NAME=node3@cluster-host3
     depends_on:
       etcd:
         condition: service_healthy
@@ -139,9 +139,9 @@ services:
       args:
         NODE_CMD: node4
     container_name: cluster-node4
-    hostname: cluster-node4
+    hostname: cluster-host4
     environment:
-      - NODE_NAME=demo@cluster-node4
+      - NODE_NAME=node4@cluster-host4
     depends_on:
       etcd:
         condition: service_healthy
@@ -162,9 +162,9 @@ services:
       args:
         NODE_CMD: node5
     container_name: cluster-node5
-    hostname: cluster-node5
+    hostname: cluster-host5
     environment:
-      - NODE_NAME=demo@cluster-node5
+      - NODE_NAME=node5@cluster-host5
     depends_on:
       etcd:
         condition: service_healthy
