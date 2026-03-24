@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	ergo.services/application/mcp v0.0.0-20260324090809-3e912505dd14
-	ergo.services/application/observer v0.1.1-0.20260324090809-3e912505dd14
+	ergo.services/application/observer v0.1.1-0.20260324142008-e9f886444ccf
 	ergo.services/application/radar v0.0.0-20260324090809-3e912505dd14
 	ergo.services/ergo v1.999.321-0.20260323195702-0be2846405c2
 	ergo.services/logger/colored v0.1.0
