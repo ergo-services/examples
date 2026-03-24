@@ -3,17 +3,17 @@ module observability
 go 1.24.0
 
 require (
-	ergo.services/application/mcp v0.0.0-20260319110937-5dfce4f40af8
-	ergo.services/application/observer v0.1.1-0.20260319113901-a9ac5f4a1f4b
-	ergo.services/application/radar v0.0.0-20260319110937-5dfce4f40af8
-	ergo.services/ergo v1.999.321-0.20260319110303-2a611af396ab
+	ergo.services/application/mcp v0.0.0-20260324090809-3e912505dd14
+	ergo.services/application/observer v0.1.1-0.20260324090809-3e912505dd14
+	ergo.services/application/radar v0.0.0-20260324090809-3e912505dd14
+	ergo.services/ergo v1.999.321-0.20260323195702-0be2846405c2
 	ergo.services/logger/colored v0.1.0
 	ergo.services/registrar/etcd v0.1.0
 )
 
 require (
-	ergo.services/actor/health v0.0.0-20260319110738-705bfad50598 // indirect
-	ergo.services/actor/metrics v0.2.2-0.20260319110738-705bfad50598 // indirect
+	ergo.services/actor/health v0.0.0-20260324090600-cb77f609db45 // indirect
+	ergo.services/actor/metrics v0.2.2-0.20260324090600-cb77f609db45 // indirect
 	ergo.services/meta/sse v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
