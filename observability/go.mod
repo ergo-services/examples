@@ -1,14 +1,14 @@
 module observability
 
-go 1.24.0
+go 1.25.0
 
 require (
-	ergo.services/application/mcp v0.0.0-20260324090809-3e912505dd14
-	ergo.services/application/observer v0.1.1-0.20260324142008-e9f886444ccf
-	ergo.services/application/radar v0.0.0-20260324090809-3e912505dd14
-	ergo.services/ergo v1.999.321-0.20260323195702-0be2846405c2
+	ergo.services/application/mcp v0.0.0-20260325173848-5e6e8df82929
+	ergo.services/application/observer v0.1.1-0.20260325173848-5e6e8df82929
+	ergo.services/application/radar v0.0.0-20260325173848-5e6e8df82929
+	ergo.services/ergo v1.999.321-0.20260325173700-c858e8598922
 	ergo.services/logger/colored v0.1.0
-	ergo.services/registrar/etcd v0.1.0
+	ergo.services/registrar/etcd v0.2.0
 )
 
 require (
@@ -31,16 +31,16 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
-	go.etcd.io/etcd/api/v3 v3.5.13 // indirect
-	go.etcd.io/etcd/client/pkg/v3 v3.5.13 // indirect
-	go.etcd.io/etcd/client/v3 v3.5.13 // indirect
+	go.etcd.io/etcd/api/v3 v3.5.28 // indirect
+	go.etcd.io/etcd/client/pkg/v3 v3.5.28 // indirect
+	go.etcd.io/etcd/client/v3 v3.5.28 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
-	golang.org/x/net v0.45.0 // indirect
-	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/text v0.30.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250825161204-c5933d9347a5 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250825161204-c5933d9347a5 // indirect
-	google.golang.org/grpc v1.75.1 // indirect
+	golang.org/x/net v0.51.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20251202230838-ff82c1b0f217 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
+	google.golang.org/grpc v1.79.3 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
