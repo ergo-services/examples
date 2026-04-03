@@ -2,17 +2,14 @@ FROM golang:1.25-alpine AS builder
 
 RUN apk add --no-cache git
 
-WORKDIR /app
+WORKDIR /src
 
-COPY go.mod go.sum ./
+COPY . .
 
 RUN go mod download
 
-COPY cmd/ ./cmd/
-COPY apps/ ./apps/
-
 ARG NODE_CMD=node1
-RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof -o app ./cmd/${NODE_CMD}
+RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof -o /app ./cmd/${NODE_CMD}
 
 FROM alpine:latest
 
@@ -20,6 +17,6 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-COPY --from=builder /app/app .
+COPY --from=builder /app .
 
 CMD ["./app"]

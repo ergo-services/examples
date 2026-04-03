@@ -1,0 +1,157 @@
+{
+  "title": "Ergo Tracing",
+  "uid": "ergo-tracing",
+  "editable": true,
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Recent Traces",
+      "type": "table",
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 0 },
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "targets": [
+        {
+          "queryType": "nativeSearch",
+          "limit": 50
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          { "displayName": "Start time", "desc": true }
+        ]
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": { "type": "auto" }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Trace ID" },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "View trace",
+                    "url": "/explore?schemaVersion=1&panes={\"bps\":{\"datasource\":\"tempo\",\"queries\":[{\"queryType\":\"traceql\",\"query\":\"${__data.fields[\\\"Trace ID\\\"]}\"}]}}&orgId=1",
+                    "targetBlank": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "description": "Recent traces from all Ergo nodes. Click Trace ID to open the distributed waterfall in Explore."
+    },
+    {
+      "id": 3,
+      "title": "Traces by Service (Node)",
+      "type": "piechart",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 12 },
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "targets": [
+        {
+          "queryType": "nativeSearch",
+          "limit": 100,
+          "groupBy": [
+            { "tag": "resource.service.name", "type": "string" }
+          ]
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["count"]
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "right"
+        }
+      },
+      "description": "Distribution of traces across Ergo cluster nodes."
+    },
+    {
+      "id": 4,
+      "title": "Span Kind Distribution",
+      "type": "piechart",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 12 },
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "targets": [
+        {
+          "queryType": "nativeSearch",
+          "limit": 100,
+          "groupBy": [
+            { "tag": "ergo.kind", "type": "string" }
+          ]
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["count"]
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "right"
+        }
+      },
+      "description": "Distribution of span kinds: send, request, response, spawn, terminate."
+    },
+    {
+      "id": 5,
+      "title": "Error Traces",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 12 },
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "targets": [
+        {
+          "queryType": "traceql",
+          "query": "{ status = error }",
+          "limit": 20
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          { "displayName": "Start time", "desc": true }
+        ]
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Trace ID" },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "View trace",
+                    "url": "/explore?schemaVersion=1&panes={\"bps\":{\"datasource\":\"tempo\",\"queries\":[{\"queryType\":\"traceql\",\"query\":\"${__data.fields[\\\"Trace ID\\\"]}\"}]}}&orgId=1",
+                    "targetBlank": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "description": "Traces containing errors. Click Trace ID to view details."
+    }
+  ],
+  "templating": {
+    "list": []
+  }
+}

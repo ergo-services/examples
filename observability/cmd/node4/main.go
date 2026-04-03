@@ -10,14 +10,16 @@ import (
 	"ergo.services/ergo/lib"
 
 	"ergo.services/application/mcp"
+	"ergo.services/application/pulse"
 	"ergo.services/application/radar"
 	"ergo.services/logger/colored"
 	"ergo.services/registrar/etcd"
 
-	"observability/apps/latency"
 	"observability/apps/events"
+	"observability/apps/latency"
 	"observability/apps/lifecycle"
 	"observability/apps/messaging"
+	"observability/apps/tracing"
 )
 
 func main() {
@@ -51,10 +53,15 @@ func main() {
 	options.Applications = []gen.ApplicationBehavior{
 		radar.CreateApp(radar.Options{Host: "0.0.0.0", Port: 9090}),
 		mcp.CreateApp(mcp.Options{}),
+		pulse.CreateApp(pulse.Options{
+			Endpoint: "tempo:4318",
+			Insecure: true,
+		}),
 		latency.CreateApp(),
 		messaging.CreateApp(),
 		lifecycle.CreateApp(),
 		events.CreateApp(),
+		tracing.CreateApp(),
 	}
 
 	fmt.Printf("Starting %s...\n", nodeName)

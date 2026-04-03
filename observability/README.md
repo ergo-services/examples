@@ -3,19 +3,20 @@
 A deliberately stressed five-node Ergo cluster designed to generate observable signal across
 every layer of the framework. All scenario applications run continuously, keeping the cluster
 under load at all times: mailbox latency spikes, high-volume network traffic, constant process
-churn, and a full spread of event utilization states. The goal is not a quiet healthy cluster;
-it is a cluster that always has something worth investigating, so that every observability tool
-has meaningful data to work with.
+churn, a full spread of event utilization states, and distributed tracing across nodes. The goal
+is not a quiet healthy cluster; it is a cluster that always has something worth investigating,
+so that every observability tool has meaningful data to work with.
 
-Three observability layers provide full visibility:
+Four observability layers provide full visibility:
 
-- **Grafana dashboards:** Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Two dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system) and **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles)
-- **Observer web UI:** real-time process inspection, application trees, and network topology
+- **Grafana dashboards:** Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Three dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system), **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles), and **Ergo Tracing** (distributed trace search, service breakdown, error traces)
+- **Grafana Tempo:** Distributed tracing backend. Traces are exported from every node via the [Pulse](https://docs.ergo.services/extra-library/applications/pulse) OTLP/HTTP exporter. Explore traces in Grafana with full waterfall view across nodes.
+- **Observer web UI:** real-time process inspection, application trees, network topology, log streaming, and built-in tracing waterfall with sent/delivered/processed point visualization
 - **AI-powered diagnostics:** an MCP server on node1 exposes 48 tools to Claude Code (or any MCP-compatible AI client), turning it into an interactive SRE that investigates the cluster through natural language conversation
 
 ## Scenario Applications
 
-Each node runs four scenario applications that keep the cluster continuously stressed.
+Each node runs five scenario applications that keep the cluster continuously stressed.
 
 ### Latency (`apps/latency`)
 
@@ -57,6 +58,21 @@ distributed across categories:
 | on_demand | Starts publishing only when the first subscriber appears |
 | no_publishing | Subscribers waiting but producer never publishes |
 
+### Tracing (`apps/tracing`)
+
+Generates distributed tracing data across the cluster. Three actors per node demonstrate
+different message passing patterns, all with tracing enabled (`TracingSamplerAlways`):
+
+- **worker:** periodically sends async messages (Send), synchronous requests (Call), and
+  multi-hop forward chains across remote nodes. Each operation produces a distributed trace
+  that spans multiple nodes.
+- **relay:** handles Call requests. Direct requests return immediately. Forward requests
+  are relayed to a sink on another node, demonstrating the A->B->C->response->A pattern.
+- **sink:** receives async messages and forwarded Call requests. Replies with Pong responses.
+
+Traces are exported to Grafana Tempo via the Pulse application (OTLP/HTTP) and are also
+visible in real-time in the Observer web UI tracing page.
+
 ### Logging
 
 All scenario apps produce log messages at different levels (debug, info, warning, error).
@@ -79,7 +95,9 @@ graph TB
 
     etcd -. registrar .-> Cluster
     grafana["Grafana"] -- queries --> prometheus["Prometheus"]
+    grafana -- queries --> tempo["Tempo"]
     prometheus -- "/metrics" --> Cluster
+    Cluster -- "OTLP/HTTP" --> tempo
     Cluster -. HTTP .-> slowweb["slowweb"]
     obs["observer@observer
     Web UI :9911"] -. registrar .-> etcd
@@ -87,11 +105,13 @@ graph TB
 
 Each node runs the same set of applications:
 - `radar`: Prometheus metrics exporter (`/metrics`, `/health/live`, `/health/ready`)
+- `pulse`: OTLP/HTTP tracing exporter (sends spans to Tempo)
 - `mcp`: MCP server (node1 only exposes port 9922)
-- `latency_scenario`, `messaging_scenario`, `lifecycle_scenario`, `events_scenario`
+- `latency_scenario`, `messaging_scenario`, `lifecycle_scenario`, `events_scenario`, `tracing_scenario`
 
 A separate `observer` node joins the cluster and provides a web UI on port 9911
-for real-time process inspection, application trees, and network topology.
+for real-time process inspection, application trees, network topology, log streaming,
+and tracing waterfall.
 
 Nodes start sequentially via Docker healthcheck dependencies:
 node1 -> node2 -> node3 -> node4 -> node5.
@@ -115,8 +135,14 @@ make up
 
 Open Grafana, navigate to the **Ergo Cluster** dashboard. Within a minute of startup,
 all panels will show live data: latency spikes, network bursts, process churn, and
-event traffic. Open Observer for real-time process inspection, application trees,
-and network topology.
+event traffic.
+
+For tracing, open the **Ergo Tracing** dashboard. Click any Trace ID to open the
+distributed waterfall in Grafana Explore, showing message flow across nodes with
+timing for each sent/delivered/processed point.
+
+Open Observer for real-time process inspection, application trees, network topology,
+and the built-in tracing page with waterfall visualization.
 
 ## Commands
 
@@ -128,6 +154,29 @@ make logs     # Follow logs from all containers
 make status   # Show container status
 make clean    # Remove containers, images, and volumes
 ```
+
+## Distributed Tracing
+
+Every node runs the Pulse application which exports tracing spans to Grafana Tempo
+via OTLP/HTTP. The tracing scenario application generates three types of traced
+message chains:
+
+- **Send:** async fire-and-forget messages between nodes
+- **Call:** synchronous request/response between nodes
+- **Forward:** multi-hop chains (A calls B, B forwards to C, C responds to A)
+
+Each message produces up to three observation points:
+- **Sent** -- recorded on the sending node when the message leaves
+- **Delivered** -- recorded on the receiving node when the message enters the mailbox
+- **Processed** -- recorded on the receiving node when the handler completes
+
+In Grafana Tempo, traces appear as a waterfall showing the full message flow across
+nodes. Each span includes attributes: `ergo.from`, `ergo.to`, `ergo.behavior`,
+`ergo.message`, `ergo.kind`, `ergo.point`.
+
+In Observer, the tracing page shows the same data in real-time with color-coded
+point markers (blue=sent, green=delivered, orange=processed), behavior labels,
+and hover tooltips with timing breakdown.
 
 ## AI-Powered Cluster Diagnostics (MCP)
 

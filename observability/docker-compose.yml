@@ -25,6 +25,15 @@ services:
       retries: 5
       start_period: 10s
 
+  tempo:
+    image: grafana/tempo:2.6.1
+    container_name: tempo
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml:ro
+    networks:
+      - observability-net
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -44,13 +53,15 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=ergo
       - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - ./grafana/ergo-cluster.json:/var/lib/grafana/dashboards/ergo-cluster.json:ro
       - ./grafana/slowweb.json:/var/lib/grafana/dashboards/slowweb.json:ro
+      - ./grafana/ergo-tracing.json:/var/lib/grafana/dashboards/ergo-tracing.json:ro
     depends_on:
       - prometheus
+      - tempo
     networks:
       - observability-net
 
@@ -65,6 +76,7 @@ services:
   cluster-node1:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         NODE_CMD: node1
     container_name: cluster-node1
@@ -90,6 +102,7 @@ services:
   cluster-node2:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         NODE_CMD: node2
     container_name: cluster-node2
@@ -113,6 +126,7 @@ services:
   cluster-node3:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         NODE_CMD: node3
     container_name: cluster-node3
@@ -136,6 +150,7 @@ services:
   cluster-node4:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         NODE_CMD: node4
     container_name: cluster-node4
@@ -159,6 +174,7 @@ services:
   cluster-node5:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         NODE_CMD: node5
     container_name: cluster-node5
@@ -176,6 +192,7 @@ services:
   observer:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         NODE_CMD: observer
     container_name: observer

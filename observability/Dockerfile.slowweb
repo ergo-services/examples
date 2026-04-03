@@ -1,14 +1,12 @@
 FROM golang:1.25-alpine AS builder
 
-WORKDIR /app
+WORKDIR /src
 
-COPY go.mod go.sum ./
+COPY . .
 
 RUN go mod download
 
-COPY cmd/slowweb/ ./cmd/slowweb/
-
-RUN CGO_ENABLED=0 GOOS=linux go build -o slowweb ./cmd/slowweb
+RUN CGO_ENABLED=0 GOOS=linux go build -o /slowweb ./cmd/slowweb
 
 FROM alpine:latest
 
@@ -16,6 +14,6 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-COPY --from=builder /app/slowweb .
+COPY --from=builder /slowweb .
 
 CMD ["./slowweb"]
