@@ -2,6 +2,7 @@ services:
   etcd:
     image: quay.io/coreos/etcd:v3.5.13
     container_name: etcd
+    restart: unless-stopped
     command:
       - /usr/local/bin/etcd
       - --name=etcd
@@ -16,6 +17,7 @@ services:
       - --log-level=warn
       - --logger=zap
       - --log-outputs=stderr
+    mem_limit: 128m
     networks:
       - observability-net
     healthcheck:
@@ -28,26 +30,36 @@ services:
   tempo:
     image: grafana/tempo:2.6.1
     container_name: tempo
+    restart: unless-stopped
     command: ["-config.file=/etc/tempo.yaml"]
+    environment:
+      - GOMEMLIMIT=128MiB
+    mem_limit: 256m
     volumes:
       - ./tempo.yaml:/etc/tempo.yaml:ro
     networks:
       - observability-net
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.2.1
     container_name: prometheus
+    restart: unless-stopped
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --web.listen-address=:9091
+      - --storage.tsdb.retention.time=1h
+      - --storage.tsdb.retention.size=100MB
+    mem_limit: 256m
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - observability-net
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.5.2
     container_name: grafana
+    restart: unless-stopped
+    mem_limit: 384m
     ports:
       - "8888:3000"
     environment:
@@ -68,19 +80,21 @@ services:
   slowweb:
     build:
       context: .
-      dockerfile: Dockerfile.slowweb
+      target: slowweb
     container_name: slowweb
+    restart: unless-stopped
+    mem_limit: 64m
     networks:
       - observability-net
 
   cluster-node1:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_CMD: node1
+      target: node1
     container_name: cluster-node1
     hostname: cluster-host1
+    restart: unless-stopped
+    mem_limit: 128m
     ports:
       - "9922:9922"
     environment:
@@ -102,11 +116,11 @@ services:
   cluster-node2:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_CMD: node2
+      target: node2
     container_name: cluster-node2
     hostname: cluster-host2
+    restart: unless-stopped
+    mem_limit: 128m
     environment:
       - NODE_NAME=node2@cluster-host2
     depends_on:
@@ -126,11 +140,11 @@ services:
   cluster-node3:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_CMD: node3
+      target: node3
     container_name: cluster-node3
     hostname: cluster-host3
+    restart: unless-stopped
+    mem_limit: 128m
     environment:
       - NODE_NAME=node3@cluster-host3
     depends_on:
@@ -150,11 +164,11 @@ services:
   cluster-node4:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_CMD: node4
+      target: node4
     container_name: cluster-node4
     hostname: cluster-host4
+    restart: unless-stopped
+    mem_limit: 128m
     environment:
       - NODE_NAME=node4@cluster-host4
     depends_on:
@@ -174,11 +188,11 @@ services:
   cluster-node5:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_CMD: node5
+      target: node5
     container_name: cluster-node5
     hostname: cluster-host5
+    restart: unless-stopped
+    mem_limit: 128m
     environment:
       - NODE_NAME=node5@cluster-host5
     depends_on:
@@ -186,17 +200,23 @@ services:
         condition: service_healthy
       slowweb:
         condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/health/live"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+      start_period: 5s
     networks:
       - observability-net
 
   observer:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_CMD: observer
+      target: observer
     container_name: observer
     hostname: observer
+    restart: unless-stopped
+    mem_limit: 64m
     ports:
       - "9911:9911"
     environment:

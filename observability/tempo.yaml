@@ -8,6 +8,16 @@ distributor:
         http:
           endpoint: "0.0.0.0:4318"
 
+ingester:
+  max_block_duration: 30s
+  max_block_bytes: 5000000
+  trace_idle_period: 5s
+  flush_check_period: 5s
+
+compactor:
+  compaction:
+    block_retention: 30m
+
 storage:
   trace:
     backend: local
@@ -15,3 +25,11 @@ storage:
       path: /var/tempo/wal
     local:
       path: /var/tempo/blocks
+    pool:
+      max_workers: 10
+      queue_depth: 100
+
+overrides:
+  ingestion_rate_limit_bytes: 200000
+  ingestion_burst_size_bytes: 400000
+  max_traces_per_user: 500
