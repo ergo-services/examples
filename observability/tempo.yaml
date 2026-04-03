@@ -9,10 +9,10 @@ distributor:
           endpoint: "0.0.0.0:4318"
 
 ingester:
-  max_block_duration: 30s
-  max_block_bytes: 5000000
-  trace_idle_period: 5s
-  flush_check_period: 5s
+  max_block_duration: 2m
+  max_block_bytes: 10000000
+  trace_idle_period: 10s
+  flush_check_period: 10s
 
 compactor:
   compaction:

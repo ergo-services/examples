@@ -9,7 +9,7 @@ so that every observability tool has meaningful data to work with.
 
 Four observability layers provide full visibility:
 
-- **Grafana dashboards:** Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Three dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system), **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles), and **Ergo Tracing** (distributed trace search, service breakdown, error traces)
+- **Grafana dashboards:** Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Three dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system), **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles), and **Ergo Tracing** (trace search with TraceQL filtering by node, behavior, message type, and any span attribute)
 - **Grafana Tempo:** Distributed tracing backend. Traces are exported from every node via the [Pulse](https://docs.ergo.services/extra-library/applications/pulse) OTLP/HTTP exporter. Explore traces in Grafana with full waterfall view across nodes.
 - **Observer web UI:** real-time process inspection, application trees, network topology, log streaming, and built-in tracing waterfall with sent/delivered/processed point visualization
 - **AI-powered diagnostics:** an MCP server on node1 exposes 48 tools to Claude Code (or any MCP-compatible AI client), turning it into an interactive SRE that investigates the cluster through natural language conversation
@@ -126,20 +126,19 @@ node1 -> node2 -> node3 -> node4 -> node5.
 make up
 ```
 
-| Service    | URL                          | Credentials   |
-|------------|------------------------------|---------------|
-| Grafana    | http://localhost:8888         | admin / ergo  |
-| Prometheus | http://localhost:9091         |               |
-| Observer   | http://localhost:9911         |               |
-| MCP        | http://localhost:9922/mcp     |               |
+| Service    | URL                                    |
+|------------|----------------------------------------|
+| Dashboards | http://localhost:8888/dashboards        |
+| Observer   | http://localhost:9911                   |
+| MCP        | http://localhost:9922/mcp               |
 
 Open Grafana, navigate to the **Ergo Cluster** dashboard. Within a minute of startup,
 all panels will show live data: latency spikes, network bursts, process churn, and
 event traffic.
 
-For tracing, open the **Ergo Tracing** dashboard. Click any Trace ID to open the
-distributed waterfall in Grafana Explore, showing message flow across nodes with
-timing for each sent/delivered/processed point.
+For tracing, open the **Ergo Tracing** dashboard. Use the TraceQL filter to search
+by node, behavior, message type, or any span attribute. Click any Trace ID to open
+the distributed waterfall in Grafana Explore.
 
 Open Observer for real-time process inspection, application trees, network topology,
 and the built-in tracing page with waterfall visualization.
@@ -157,9 +156,7 @@ make clean    # Remove containers, images, and volumes
 
 ## Distributed Tracing
 
-Every node runs the Pulse application which exports tracing spans to Grafana Tempo
-via OTLP/HTTP. The tracing scenario application generates three types of traced
-message chains:
+Every node runs the [Pulse](https://docs.ergo.services/extra-library/applications/pulse) application which exports tracing spans to Grafana Tempo via OTLP/HTTP. The tracing scenario application generates three types of traced message chains:
 
 - **Send:** async fire-and-forget messages between nodes
 - **Call:** synchronous request/response between nodes
@@ -170,13 +167,38 @@ Each message produces up to three observation points:
 - **Delivered** -- recorded on the receiving node when the message enters the mailbox
 - **Processed** -- recorded on the receiving node when the handler completes
 
-In Grafana Tempo, traces appear as a waterfall showing the full message flow across
-nodes. Each span includes attributes: `ergo.from`, `ergo.to`, `ergo.behavior`,
-`ergo.message`, `ergo.kind`, `ergo.point`.
+### OTLP Mapping
 
-In Observer, the tracing page shows the same data in real-time with color-coded
-point markers (blue=sent, green=delivered, orange=processed), behavior labels,
-and hover tooltips with timing breakdown.
+Pulse maps each observation point to one OTLP span. Sent is the anchor for each message, with Delivered and Processed as its children. Response spans nest under Request.Processed, forming a natural call hierarchy:
+
+```
+Req.Sent (CLIENT)
+├── Req.Delivered (SERVER)
+└── Req.Processed (SERVER)
+    └── Resp.Sent (SERVER)
+        └── Resp.Delivered (CLIENT)
+```
+
+SpanKind depends on both the message kind and the observation point. The sending side gets CLIENT/PRODUCER, the receiving side gets SERVER/CONSUMER. For Response, the roles are inverted: Sent is SERVER (handler sending back), Delivered is CLIENT (caller receiving the answer).
+
+Every span includes attributes: `ergo.node`, `ergo.from`, `ergo.to`, `ergo.behavior`, `ergo.message`, `ergo.kind`, `ergo.point`, `ergo.ref` (for Request/Response correlation).
+
+### Trace Search
+
+The **Ergo Tracing** dashboard provides a TraceQL filter for searching traces. Examples:
+
+| What to find | TraceQL filter |
+|---|---|
+| Spans from a specific node | `resource.service.name =~ ".*node3.*"` |
+| Only requests | `.ergo.kind = "request"` |
+| Specific actor behavior | `.ergo.behavior = "my_actor"` |
+| By message type | `name =~ ".*PingRequest.*"` |
+| Errors | `status = error` |
+| Combination | `.ergo.kind = "request" && .ergo.behavior = "trace_relay"` |
+
+Click any Trace ID to open the full waterfall in Grafana Explore.
+
+In Observer, the tracing page shows the same data in real-time with color-coded point markers (blue=sent, green=delivered, orange=processed), behavior labels, and hover tooltips with timing breakdown.
 
 ## AI-Powered Cluster Diagnostics (MCP)
 

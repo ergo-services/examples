@@ -33,8 +33,8 @@ services:
     restart: unless-stopped
     command: ["-config.file=/etc/tempo.yaml"]
     environment:
-      - GOMEMLIMIT=128MiB
-    mem_limit: 256m
+      - GOMEMLIMIT=256MiB
+    mem_limit: 512m
     volumes:
       - ./tempo.yaml:/etc/tempo.yaml:ro
     networks:
