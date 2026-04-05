@@ -54,8 +54,7 @@ func main() {
 		radar.CreateApp(radar.Options{Host: "0.0.0.0", Port: 9090}),
 		mcp.CreateApp(mcp.Options{Host: "0.0.0.0", Port: 9922}),
 		pulse.CreateApp(pulse.Options{
-			Endpoint: "tempo:4318",
-			Insecure: true,
+			URL: "http://tempo:4318/v1/traces",
 		}),
 		latency.CreateApp(),
 		messaging.CreateApp(),
