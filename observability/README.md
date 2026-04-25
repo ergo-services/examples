@@ -205,7 +205,7 @@ In Observer, the tracing page shows the same data in real-time with color-coded 
 Besides Grafana dashboards with historical metrics, this example demonstrates real-time
 interactive diagnostics via MCP (Model Context Protocol). The MCP application on node1
 exposes 48 tools covering processes, network, events, logging, debug profiling, and
-real-time samplers. Combined with the `ergo-devops` agent, Claude Code becomes an
+real-time samplers. Combined with the `devops` agent, Claude Code becomes an
 interactive SRE that investigates the cluster through conversation.
 
 The MCP server acts as a cluster proxy; every tool accepts an optional `node` parameter.
@@ -260,13 +260,22 @@ Edit `~/.claude/settings.json` and add the `mcp__demo-cluster` permission prefix
 
 Without this, Claude Code will ask for confirmation on every tool call.
 
-#### 4. Install ergo-devops agent and skill (Claude Code)
+#### 4. Install devops agent and skill (Claude Code)
+
+As a plugin (recommended):
+
+```
+/plugin marketplace add ergo-services/claude
+/plugin install ergo@ergo-services
+```
+
+Or manually for local development:
 
 ```bash
 git clone https://github.com/ergo-services/claude.git /tmp/ergo-claude
 mkdir -p ~/.claude/agents ~/.claude/skills
-cp /tmp/ergo-claude/agents/ergo-devops.md ~/.claude/agents/
-cp -r /tmp/ergo-claude/skills/ergo-devops ~/.claude/skills/
+cp /tmp/ergo-claude/agents/devops.md ~/.claude/agents/
+cp -r /tmp/ergo-claude/skills/devops ~/.claude/skills/
 rm -rf /tmp/ergo-claude
 ```
 
