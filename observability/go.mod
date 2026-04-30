@@ -4,10 +4,10 @@ go 1.25.0
 
 require (
 	ergo.services/application/mcp v0.0.0-20260405205406-640c04e385b3
-	ergo.services/application/observer v0.1.1-0.20260428095714-a47dc382d77b
+	ergo.services/application/observer v0.1.1-0.20260430142746-079405625ced
 	ergo.services/application/pulse v0.0.0-20260405205406-640c04e385b3
 	ergo.services/application/radar v0.0.0-20260405205406-640c04e385b3
-	ergo.services/ergo v1.999.321-0.20260426193917-e0ba1ed81eb7
+	ergo.services/ergo v1.999.321-0.20260430142643-a2ae64677f4a
 	ergo.services/logger/colored v0.1.0
 	ergo.services/registrar/etcd v0.3.0
 )
