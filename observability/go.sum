@@ -8,6 +8,8 @@ ergo.services/application/observer v0.1.1-0.20260505094800-8246283e2266 h1:KOnf/
 ergo.services/application/observer v0.1.1-0.20260505094800-8246283e2266/go.mod h1:/UEnpcXGahcDVVwuhz3Llsmcp4xwTtWyS435jBv/Ygk=
 ergo.services/application/observer v0.1.1-0.20260505114813-8427e5494a6a h1:ZoCdB0BRbFagPaXoPR0GhbX3QLTdqvj8uHQnIPDN2Ng=
 ergo.services/application/observer v0.1.1-0.20260505114813-8427e5494a6a/go.mod h1:/UEnpcXGahcDVVwuhz3Llsmcp4xwTtWyS435jBv/Ygk=
+ergo.services/application/observer v0.1.1-0.20260505115605-1156c750d09e h1:KiqPNw61MZ91HqmagjvgI/gv7xijOVdh80TBYKxHrlM=
+ergo.services/application/observer v0.1.1-0.20260505115605-1156c750d09e/go.mod h1:/UEnpcXGahcDVVwuhz3Llsmcp4xwTtWyS435jBv/Ygk=
 ergo.services/application/pulse v0.0.0-20260505094800-8246283e2266 h1:jO4OQWavhX5AOZbUBvxapQ4vdWnknw96cN7jKv/A4QM=
 ergo.services/application/pulse v0.0.0-20260505094800-8246283e2266/go.mod h1:YP7niX89BHOV3pJvH1ypD0tIpMrmL490fAyehu1VElE=
 ergo.services/application/radar v0.0.0-20260505094800-8246283e2266 h1:u8N1tEx3hVWbNAEtSuF+jMuG/CSO2pEO1EGznYOJnfc=
