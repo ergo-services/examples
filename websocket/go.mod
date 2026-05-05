@@ -1,6 +1,6 @@
 module example
 
-go 1.20
+go 1.21
 
 require (
 	ergo.services/application/observer v0.1.0

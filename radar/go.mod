@@ -1,6 +1,6 @@
 module radar-demo
 
-go 1.20
+go 1.21
 
 require (
 	ergo.services/application/radar v0.0.0-20260301100336-6721de8ce134
