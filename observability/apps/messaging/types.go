@@ -1,7 +1,5 @@
 package messaging
 
-import "ergo.services/ergo/net/edf"
-
 type OrderSide string
 
 type OrderTag struct {
@@ -21,14 +19,6 @@ type TestOrder struct {
 	Metadata map[string]string
 	Notes    *string
 	Margin   bool
-}
-
-func init() {
-	edf.RegisterTypeOf(MessagePayload{})
-	edf.RegisterTypeOf(MessageBulkPayload{})
-	edf.RegisterTypeOf(OrderSide(""))
-	edf.RegisterTypeOf(OrderTag{})
-	edf.RegisterTypeOf(TestOrder{})
 }
 
 // MessagePayload is the async message sent from sender to remote worker pool

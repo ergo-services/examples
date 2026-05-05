@@ -16,6 +16,16 @@ func CreateApp() gen.ApplicationBehavior {
 type app struct{}
 
 func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
+	if err := node.Network().RegisterTypes([]any{
+		MessagePayload{},
+		MessageBulkPayload{},
+		OrderSide(""),
+		OrderTag{},
+		TestOrder{},
+	}); err != nil {
+		return gen.ApplicationSpec{}, err
+	}
+
 	return gen.ApplicationSpec{
 		Name:        appName,
 		Description: "Messaging scenario: random bursts with variable payload size",

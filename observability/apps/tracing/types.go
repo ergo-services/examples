@@ -1,19 +1,5 @@
 package tracing
 
-import "ergo.services/ergo/net/edf"
-
-func init() {
-	edf.RegisterTypeOf(MessagePing{})
-	edf.RegisterTypeOf(MessagePong{})
-	edf.RegisterTypeOf(MessageNotify{})
-	edf.RegisterTypeOf(MessageStatus{})
-	edf.RegisterTypeOf(PingRequest{})
-	edf.RegisterTypeOf(PongResponse{})
-	edf.RegisterTypeOf(ValidateRequest{})
-	edf.RegisterTypeOf(ValidateResponse{})
-	edf.RegisterTypeOf(MessageForward{})
-}
-
 // MessagePing async fire-and-forget message
 type MessagePing struct {
 	Seq  int

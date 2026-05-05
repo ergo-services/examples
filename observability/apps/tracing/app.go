@@ -18,6 +18,20 @@ func CreateApp() gen.ApplicationBehavior {
 type app struct{}
 
 func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
+	if err := node.Network().RegisterTypes([]any{
+		MessagePing{},
+		MessagePong{},
+		MessageNotify{},
+		MessageStatus{},
+		PingRequest{},
+		PongResponse{},
+		ValidateRequest{},
+		ValidateResponse{},
+		MessageForward{},
+	}); err != nil {
+		return gen.ApplicationSpec{}, err
+	}
+
 	return gen.ApplicationSpec{
 		Name:        appName,
 		Description: "Tracing scenario: distributed message chains across cluster",

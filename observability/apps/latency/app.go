@@ -16,6 +16,10 @@ func CreateApp() gen.ApplicationBehavior {
 type app struct{}
 
 func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
+	if err := node.Network().RegisterType(MessagePing{}); err != nil {
+		return gen.ApplicationSpec{}, err
+	}
+
 	return gen.ApplicationSpec{
 		Name:        appName,
 		Description: "Latency scenario: periodic message bursts to remote worker pools",

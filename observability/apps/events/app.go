@@ -15,6 +15,10 @@ func CreateApp() gen.ApplicationBehavior {
 type app struct{}
 
 func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
+	if err := node.Network().RegisterType(MessageEventData{}); err != nil {
+		return gen.ApplicationSpec{}, err
+	}
+
 	return gen.ApplicationSpec{
 		Name:        appName,
 		Description: "Events scenario: publishers and subscribers for event metrics",
