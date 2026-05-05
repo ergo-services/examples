@@ -10,22 +10,22 @@ RUN go mod download
 COPY . .
 
 FROM deps AS build-node1
-RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof -o /app ./cmd/node1
+RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof,typestats -o /app ./cmd/node1
 
 FROM deps AS build-node2
-RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof -o /app ./cmd/node2
+RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof,typestats -o /app ./cmd/node2
 
 FROM deps AS build-node3
-RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof -o /app ./cmd/node3
+RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof,typestats -o /app ./cmd/node3
 
 FROM deps AS build-node4
-RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof -o /app ./cmd/node4
+RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof,typestats -o /app ./cmd/node4
 
 FROM deps AS build-node5
-RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof -o /app ./cmd/node5
+RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof,typestats -o /app ./cmd/node5
 
 FROM deps AS build-observer
-RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof -o /app ./cmd/observer
+RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof,typestats -o /app ./cmd/observer
 
 FROM deps AS build-slowweb
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app ./cmd/slowweb
