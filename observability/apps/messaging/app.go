@@ -1,6 +1,7 @@
 package messaging
 
 import (
+	"ergo.services/ergo/app"
 	"ergo.services/ergo/gen"
 )
 
@@ -10,28 +11,29 @@ const (
 )
 
 func CreateApp() gen.ApplicationBehavior {
-	return &app{}
+	return &messagingApp{}
 }
 
-type app struct{}
+type messagingApp struct {
+	app.Application
+}
 
-func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
-	if err := node.Network().RegisterTypes([]any{
-		MessagePayload{},
-		MessageBulkPayload{},
-		OrderSide(""),
-		OrderTag{},
-		TestOrder{},
-	}); err != nil {
-		return gen.ApplicationSpec{}, err
-	}
-
+func (a *messagingApp) Load(args ...any) (gen.ApplicationSpec, error) {
 	return gen.ApplicationSpec{
 		Name:        appName,
 		Description: "Messaging scenario: random bursts with variable payload size",
 		Mode:        gen.ApplicationModeTemporary,
 		Map: map[string]gen.Atom{
 			"worker": poolName,
+		},
+		Network: gen.ApplicationNetwork{
+			RegisterTypes: []any{
+				MessagePayload{},
+				MessageBulkPayload{},
+				OrderSide(""),
+				OrderTag{},
+				TestOrder{},
+			},
 		},
 		Group: []gen.ApplicationMemberSpec{
 			{
@@ -41,6 +43,3 @@ func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
 		},
 	}, nil
 }
-
-func (a *app) Start(mode gen.ApplicationMode) {}
-func (a *app) Terminate(reason error)         {}

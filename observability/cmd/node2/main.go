@@ -16,6 +16,7 @@ import (
 	"ergo.services/registrar/etcd"
 
 	"observability/apps/events"
+	"observability/apps/forest"
 	"observability/apps/latency"
 	"observability/apps/lifecycle"
 	"observability/apps/messaging"
@@ -60,6 +61,7 @@ func main() {
 		messaging.CreateApp(),
 		lifecycle.CreateApp(),
 		events.CreateApp(),
+		forest.CreateApp(),
 		tracing.CreateApp(),
 	}
 

@@ -1,6 +1,7 @@
 package events
 
 import (
+	"ergo.services/ergo/app"
 	"ergo.services/ergo/gen"
 )
 
@@ -9,20 +10,21 @@ const (
 )
 
 func CreateApp() gen.ApplicationBehavior {
-	return &app{}
+	return &eventsApp{}
 }
 
-type app struct{}
+type eventsApp struct {
+	app.Application
+}
 
-func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
-	if err := node.Network().RegisterType(MessageEventData{}); err != nil {
-		return gen.ApplicationSpec{}, err
-	}
-
+func (a *eventsApp) Load(args ...any) (gen.ApplicationSpec, error) {
 	return gen.ApplicationSpec{
 		Name:        appName,
 		Description: "Events scenario: publishers and subscribers for event metrics",
 		Mode:        gen.ApplicationModeTemporary,
+		Network: gen.ApplicationNetwork{
+			RegisterTypes: []any{MessageEventData{}},
+		},
 		Group: []gen.ApplicationMemberSpec{
 			{
 				Name:    "events_sup",
@@ -31,6 +33,3 @@ func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
 		},
 	}, nil
 }
-
-func (a *app) Start(mode gen.ApplicationMode) {}
-func (a *app) Terminate(reason error)         {}

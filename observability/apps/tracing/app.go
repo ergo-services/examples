@@ -1,41 +1,43 @@
 package tracing
 
 import (
+	"ergo.services/ergo/app"
 	"ergo.services/ergo/gen"
 )
 
 const (
-	appName     gen.Atom = "tracing_scenario"
-	relayName   gen.Atom = "trace_relay"
-	sinkName    gen.Atom = "trace_sink"
-	workerName  gen.Atom = "trace_worker"
+	appName    gen.Atom = "tracing_scenario"
+	relayName  gen.Atom = "trace_relay"
+	sinkName   gen.Atom = "trace_sink"
+	workerName gen.Atom = "trace_worker"
 )
 
 func CreateApp() gen.ApplicationBehavior {
-	return &app{}
+	return &tracingApp{}
 }
 
-type app struct{}
+type tracingApp struct {
+	app.Application
+}
 
-func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
-	if err := node.Network().RegisterTypes([]any{
-		MessagePing{},
-		MessagePong{},
-		MessageNotify{},
-		MessageStatus{},
-		PingRequest{},
-		PongResponse{},
-		ValidateRequest{},
-		ValidateResponse{},
-		MessageForward{},
-	}); err != nil {
-		return gen.ApplicationSpec{}, err
-	}
-
+func (a *tracingApp) Load(args ...any) (gen.ApplicationSpec, error) {
 	return gen.ApplicationSpec{
 		Name:        appName,
 		Description: "Tracing scenario: distributed message chains across cluster",
 		Mode:        gen.ApplicationModeTemporary,
+		Network: gen.ApplicationNetwork{
+			RegisterTypes: []any{
+				MessagePing{},
+				MessagePong{},
+				MessageNotify{},
+				MessageStatus{},
+				PingRequest{},
+				PongResponse{},
+				ValidateRequest{},
+				ValidateResponse{},
+				MessageForward{},
+			},
+		},
 		Group: []gen.ApplicationMemberSpec{
 			{
 				Name:    "tracing_sup",
@@ -44,6 +46,3 @@ func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
 		},
 	}, nil
 }
-
-func (a *app) Start(mode gen.ApplicationMode) {}
-func (a *app) Terminate(reason error)         {}

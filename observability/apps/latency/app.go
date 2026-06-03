@@ -1,6 +1,7 @@
 package latency
 
 import (
+	"ergo.services/ergo/app"
 	"ergo.services/ergo/gen"
 )
 
@@ -10,22 +11,23 @@ const (
 )
 
 func CreateApp() gen.ApplicationBehavior {
-	return &app{}
+	return &latencyApp{}
 }
 
-type app struct{}
+type latencyApp struct {
+	app.Application
+}
 
-func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
-	if err := node.Network().RegisterType(MessagePing{}); err != nil {
-		return gen.ApplicationSpec{}, err
-	}
-
+func (a *latencyApp) Load(args ...any) (gen.ApplicationSpec, error) {
 	return gen.ApplicationSpec{
 		Name:        appName,
 		Description: "Latency scenario: periodic message bursts to remote worker pools",
 		Mode:        gen.ApplicationModeTemporary,
 		Map: map[string]gen.Atom{
 			"worker": workerName,
+		},
+		Network: gen.ApplicationNetwork{
+			RegisterTypes: []any{MessagePing{}},
 		},
 		Group: []gen.ApplicationMemberSpec{
 			{
@@ -35,6 +37,3 @@ func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
 		},
 	}, nil
 }
-
-func (a *app) Start(mode gen.ApplicationMode) {}
-func (a *app) Terminate(reason error)         {}

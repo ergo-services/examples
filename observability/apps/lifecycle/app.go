@@ -1,6 +1,7 @@
 package lifecycle
 
 import (
+	"ergo.services/ergo/app"
 	"ergo.services/ergo/gen"
 )
 
@@ -10,12 +11,14 @@ const (
 )
 
 func CreateApp() gen.ApplicationBehavior {
-	return &app{}
+	return &lifecycleApp{}
 }
 
-type app struct{}
+type lifecycleApp struct {
+	app.Application
+}
 
-func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
+func (a *lifecycleApp) Load(args ...any) (gen.ApplicationSpec, error) {
 	return gen.ApplicationSpec{
 		Name:        appName,
 		Description: "Lifecycle scenario: spawn/terminate churn via SOFO supervisor",
@@ -32,6 +35,3 @@ func (a *app) Load(node gen.Node, args ...any) (gen.ApplicationSpec, error) {
 		},
 	}, nil
 }
-
-func (a *app) Start(mode gen.ApplicationMode) {}
-func (a *app) Terminate(reason error)         {}
