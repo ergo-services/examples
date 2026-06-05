@@ -25,6 +25,7 @@ func (s *rootSupervisor) Init(args ...any) (act.SupervisorSpec, error) {
 			{Name: computeSup, Factory: factoryComputeSup},
 			{Name: ingestSup, Factory: factoryIngestSup},
 			{Name: jobsSup, Factory: factoryJobsSup},
+			{Name: "forest_deep", Factory: factoryDeepBranch, Args: []any{1, deepMaxDepth, true}},
 		},
 	}, nil
 }

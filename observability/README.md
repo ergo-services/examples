@@ -73,6 +73,26 @@ different message passing patterns, all with tracing enabled (`TracingSamplerAlw
 Traces are exported to Grafana Tempo via the Pulse application (OTLP/HTTP) and are also
 visible in real-time in the Observer web UI tracing page.
 
+### Forest (`apps/forest`)
+
+A deep and wide supervision tree for exercising the Observer's supervision-tree window.
+Alongside a small compute/ingest/jobs branch it builds a recursive backbone about 18 levels
+deep, a wide fan-out of child supervisors (each with its own subtree), and a large group of
+leaf workers, so big sibling groups fold into `+N` pills you can drill into. Processes carry
+long structured names (e.g. `worker_eu-central:cluster:aggregate:replica_shard-01337`) to
+demonstrate name truncation in nodes, pills and the hover popover.
+
+Leaf workers emit a steady per-worker self-traffic rate spread across classes (idle / low /
+medium / high / hot). This drives the supervision-tree **heatmaps**: open an application's
+**Tree** window, enable auto-refresh, and cycle the heatmap mode (kind, mailbox, latency,
+utilization, throughput, state) to color every node.
+
+- **throughput**: the per-process message rate; the rate classes give a live spread across
+  all buckets (idle, green, gold, orange, red). Requires auto-refresh, since the rate is a
+  delta between snapshots.
+- **utilization**: hot workers spend real time in callbacks, so they light up.
+- **mailbox**: the fastest workers show brief queue backlogs.
+
 ### Logging
 
 All scenario apps produce log messages at different levels (debug, info, warning, error).

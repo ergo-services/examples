@@ -3,18 +3,18 @@ module observability
 go 1.25.0
 
 require (
-	ergo.services/application/mcp v0.0.0-20260603151759-4139aec857e9
-	ergo.services/application/observer v0.1.1-0.20260603151759-4139aec857e9
-	ergo.services/application/pulse v0.0.0-20260603151759-4139aec857e9
-	ergo.services/application/radar v0.0.0-20260603151759-4139aec857e9
-	ergo.services/ergo v1.999.321-0.20260603070721-22205ac0e0c4
+	ergo.services/application/mcp v0.0.0-20260605144626-fd6135d43ad9
+	ergo.services/application/observer v0.1.1-0.20260605144626-fd6135d43ad9
+	ergo.services/application/pulse v0.0.0-20260605144626-fd6135d43ad9
+	ergo.services/application/radar v0.0.0-20260605144626-fd6135d43ad9
+	ergo.services/ergo v1.999.321-0.20260604080356-c601c4697361
 	ergo.services/logger/colored v0.1.1-0.20260603071559-584aab6dc5c8
 	ergo.services/registrar/etcd v0.3.1-0.20260603071539-cd298dc15719
 )
 
 require (
-	ergo.services/actor/health v0.0.0-20260603071342-e9519d110a31 // indirect
-	ergo.services/actor/metrics v0.2.2-0.20260603071342-e9519d110a31 // indirect
+	ergo.services/actor/health v0.0.0-20260605144411-0808e9f280b8 // indirect
+	ergo.services/actor/metrics v0.2.2-0.20260605144411-0808e9f280b8 // indirect
 	ergo.services/meta/sse v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
