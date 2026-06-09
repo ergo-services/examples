@@ -79,7 +79,8 @@ services:
 
   slowweb:
     build:
-      context: .
+      context: ..
+      dockerfile: observability/Dockerfile
       target: slowweb
     container_name: slowweb
     restart: unless-stopped
@@ -89,7 +90,8 @@ services:
 
   cluster-node1:
     build:
-      context: .
+      context: ..
+      dockerfile: observability/Dockerfile
       target: node1
     container_name: cluster-node1
     hostname: cluster-host1
@@ -115,7 +117,8 @@ services:
 
   cluster-node2:
     build:
-      context: .
+      context: ..
+      dockerfile: observability/Dockerfile
       target: node2
     container_name: cluster-node2
     hostname: cluster-host2
@@ -139,7 +142,8 @@ services:
 
   cluster-node3:
     build:
-      context: .
+      context: ..
+      dockerfile: observability/Dockerfile
       target: node3
     container_name: cluster-node3
     hostname: cluster-host3
@@ -163,7 +167,8 @@ services:
 
   cluster-node4:
     build:
-      context: .
+      context: ..
+      dockerfile: observability/Dockerfile
       target: node4
     container_name: cluster-node4
     hostname: cluster-host4
@@ -187,7 +192,8 @@ services:
 
   cluster-node5:
     build:
-      context: .
+      context: ..
+      dockerfile: observability/Dockerfile
       target: node5
     container_name: cluster-node5
     hostname: cluster-host5
@@ -211,7 +217,8 @@ services:
 
   observer:
     build:
-      context: .
+      context: ..
+      dockerfile: observability/Dockerfile
       target: observer
     container_name: observer
     hostname: observer

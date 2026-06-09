@@ -2,12 +2,15 @@ FROM golang:1.25-alpine AS deps
 
 RUN apk add --no-cache git
 
-WORKDIR /src
+WORKDIR /src/observability
 
-COPY go.mod go.sum ./
+COPY observability/go.mod observability/go.sum ./
 RUN go mod download
 
+WORKDIR /src
 COPY . .
+
+WORKDIR /src/observability
 
 FROM deps AS build-node1
 RUN CGO_ENABLED=0 GOOS=linux go build -tags latency,pprof,typestats -o /app ./cmd/node1
