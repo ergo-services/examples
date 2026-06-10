@@ -30,6 +30,10 @@ func (a *eventsApp) Load(args ...any) (gen.ApplicationSpec, error) {
 				Name:    "events_sup",
 				Factory: factoryEventsSup,
 			},
+			{
+				Name:    watchSupName,
+				Factory: factoryWatchSup,
+			},
 		},
 	}, nil
 }

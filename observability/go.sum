@@ -6,12 +6,16 @@ ergo.services/application/mcp v0.0.0-20260608202725-fb70aa4728f9 h1:Nx89wLIMkpHd
 ergo.services/application/mcp v0.0.0-20260608202725-fb70aa4728f9/go.mod h1:lOkgLJjwCjKcx6YsIqMf4uQv0iqrdwPU7bCYOTMZCDo=
 ergo.services/application/observer v0.1.1-0.20260608202725-fb70aa4728f9 h1:ZB1QcQ+1gUrAZFvpdwXVxf1TdisYLHkJ3AnRDekvqug=
 ergo.services/application/observer v0.1.1-0.20260608202725-fb70aa4728f9/go.mod h1:L8saVtCFOf4YT2Zc1UCOmSZ6sRrSFf2NF/12dSjidW0=
+ergo.services/application/observer v0.1.1-0.20260610203611-ac5416a1668c h1:uhg2ClzpM349aJSH/cMPAaAH73+TNPvGamsOs3HAkV8=
+ergo.services/application/observer v0.1.1-0.20260610203611-ac5416a1668c/go.mod h1:ZdhR/P6g9IDfC1ba7vYy8rNuIOb4VI/K0L4rcaPOXiU=
 ergo.services/application/pulse v0.0.0-20260608202725-fb70aa4728f9 h1:Zw3zFv1+Mig+U3noc3Om6+iD8ezN8aAy3/E435QerDs=
 ergo.services/application/pulse v0.0.0-20260608202725-fb70aa4728f9/go.mod h1:LKK0YYluQXeWc3fyaxd3rV2GseUgNx7gOCY+zyyBwB4=
 ergo.services/application/radar v0.0.0-20260608202725-fb70aa4728f9 h1:26Ogur3absQGmSLTy/9UYGuxGm7kw4HIIMIAIw3b4EU=
 ergo.services/application/radar v0.0.0-20260608202725-fb70aa4728f9/go.mod h1:/pp4jfRwf9z5MRq49UsZZq4RD3z1XQvS3clWag9GOlY=
 ergo.services/ergo v1.999.321-0.20260608202150-ed4e48600507 h1:ivVyaIcYbn4A5WgeO48pX5xzopJDc6OKadCdVjjANaM=
 ergo.services/ergo v1.999.321-0.20260608202150-ed4e48600507/go.mod h1:2WcCdXUIZvCfy9Kkac3Sx6V/tB23Mx3yK6xz77hRfbM=
+ergo.services/ergo v1.999.321-0.20260610201740-e1133b83453f h1:EJhUAWmag4+1q1cSUEuL1VkqIEUS0uJ6ecJKLtCVSkE=
+ergo.services/ergo v1.999.321-0.20260610201740-e1133b83453f/go.mod h1:2WcCdXUIZvCfy9Kkac3Sx6V/tB23Mx3yK6xz77hRfbM=
 ergo.services/logger/colored v0.1.1-0.20260603071559-584aab6dc5c8 h1:7ZcqtUyWq51vGCeiXe8mVndK4kp4iYYiwoYpjxkjfO4=
 ergo.services/logger/colored v0.1.1-0.20260603071559-584aab6dc5c8/go.mod h1:A7yrDkEWdLPcdhBlh0gJljDKU4sFcY0CYB42cvQNdUM=
 ergo.services/meta/sse v0.2.1-0.20260608202357-1b582f0fa937 h1:K5Y4nKITbCe6v6E9C2e881XqKV7T2N7CPtSqPSVXldE=

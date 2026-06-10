@@ -19,11 +19,11 @@ func factoryEventGen() gen.ProcessBehavior {
 }
 
 func (eg *eventgen) Init(args ...any) error {
-	for i := 0; i < 500; i++ {
+	for i := 0; i < 50; i++ {
 		name := gen.Atom(fmt.Sprintf("test_event_%04d", i))
 		eg.RegisterEvent(name, gen.EventOptions{})
 	}
-	eg.Log().Info("registered 500 test events")
+	eg.Log().Info("registered 50 test events")
 	return nil
 }
 
