@@ -38,20 +38,30 @@ func (w *worker) HandleMessage(from gen.PID, message any) error {
 	case messageTick:
 		w.discoverRemotes()
 		w.seq++
-		w.SetTracingSpanAttribute("seq", fmt.Sprintf("%d", w.seq))
+
+		// Business span for the whole cycle. The tick arrives untraced, so with
+		// the always-on sampler this span starts the trace and becomes its root;
+		// the Call below and everything the relay does downstream nest under it.
+		cycle := w.StartTracingSpan("trace-cycle")
+		cycle.SetAttribute("seq", fmt.Sprintf("%d", w.seq))
 
 		// Each tick sends ONE Call to relay which branches into a deep tree.
 		// The relay does: Call sink + Call remote relay + forward pattern.
 		// This produces 10-15+ observations in a single trace.
 		node := w.pickNode()
+		cycle.SetAttribute("target", string(node))
 		to := gen.ProcessID{Name: relayName, Node: node}
 		result, err := w.CallWithTimeout(to, PingRequest{
 			Payload: fmt.Sprintf("cycle_%d from %s", w.seq, w.Node().Name()),
 		}, 5)
 		if err != nil {
 			w.Log().Warning("cycle %d failed: %s", w.seq, err)
-		} else if resp, ok := result.(PongResponse); ok {
-			w.Log().Debug("cycle %d result from %s: %s", w.seq, resp.Node, resp.Payload)
+			cycle.EndError(err)
+		} else {
+			if resp, ok := result.(PongResponse); ok {
+				w.Log().Debug("cycle %d result from %s: %s", w.seq, resp.Node, resp.Payload)
+			}
+			cycle.End()
 		}
 
 		wait := 3*time.Second + time.Duration(rand.Intn(2000))*time.Millisecond

@@ -40,34 +40,40 @@ func (r *relay) HandleMessage(from gen.PID, message any) error {
 func (r *relay) HandleCall(from gen.PID, ref gen.Ref, request any) (any, error) {
 	switch req := request.(type) {
 	case PingRequest:
-		r.SetTracingSpanAttribute("action", "deep_chain")
-
-		// 1. Call local sink (adds Request+Response depth)
+		// reserve: synchronous Call to the local sink
+		reserve := r.StartTracingSpan("reserve")
 		sinkResult, err := r.Call(
 			gen.ProcessID{Name: sinkName, Node: r.Node().Name()},
 			req,
 		)
 		if err != nil {
+			reserve.EndError(err)
 			return PongResponse{Payload: "sink error: " + err.Error(), Node: string(r.Node().Name())}, nil
 		}
+		reserve.End()
 
-		// 2. Validate via sink (adds another Call branch)
+		// validate: synchronous validation Call
+		validate := r.StartTracingSpan("validate")
 		r.Call(gen.ProcessID{Name: sinkName, Node: r.Node().Name()},
 			ValidateRequest{OrderID: fmt.Sprintf("ORD-%d", rand.Intn(10000)), Amount: rand.Intn(500)})
+		validate.End()
 
-		// 3. Send async notification to sink (adds fan-out branch)
+		// notify: async fan-out to the sink
+		notify := r.StartTracingSpan("notify")
 		r.Send(gen.ProcessID{Name: sinkName, Node: r.Node().Name()},
 			MessageNotify{Kind: "relay_processed", Payload: req.Payload})
-
-		// 4. Send status update async
 		r.Send(gen.ProcessID{Name: sinkName, Node: r.Node().Name()},
 			MessageStatus{Service: "relay", Status: "processing"})
+		notify.End()
 
-		// 5. Call another relay to add more depth (~80% chance)
+		payload := fmt.Sprintf("relay(%v)", sinkResult)
+
+		// forward to a peer relay to add more depth (~80% chance)
 		remotes := r.findRemotes()
 		if len(remotes) > 0 && rand.Intn(5) < 4 {
 			target := remotes[rand.Intn(len(remotes))]
-			r.SetTracingSpanAttribute("nested_relay", string(target))
+			forward := r.StartTracingSpan("forward-to-peer")
+			forward.SetAttribute("peer", string(target))
 			nestedResult, err := r.CallWithTimeout(
 				gen.ProcessID{Name: relayName, Node: target},
 				MessageForward{
@@ -77,29 +83,30 @@ func (r *relay) HandleCall(from gen.PID, ref gen.Ref, request any) (any, error) 
 				}, 4)
 			if err == nil {
 				if resp, ok := nestedResult.(PongResponse); ok {
-					return PongResponse{
-						Payload: fmt.Sprintf("relay(%v)+nested(%s)", sinkResult, resp.Payload),
-						Node:    string(r.Node().Name()),
-					}, nil
+					payload = fmt.Sprintf("relay(%v)+nested(%s)", sinkResult, resp.Payload)
 				}
+				forward.End()
+			} else {
+				forward.EndError(err)
 			}
 		}
 
 		return PongResponse{
-			Payload: fmt.Sprintf("relay(%v)", sinkResult),
+			Payload: payload,
 			Node:    string(r.Node().Name()),
 		}, nil
 
 	case MessageForward:
-		r.SetTracingSpanAttribute("action", "forward")
-		r.SetTracingSpanAttribute("hops", fmt.Sprintf("%d", len(req.Hops)))
+		// forward-endpoint: the whole forwarded operation as one span
+		endpoint := r.StartTracingSpan("forward-endpoint")
+		endpoint.SetAttribute("hops", fmt.Sprintf("%d", len(req.Hops)))
 
-		// forward endpoint: Call sink
 		sinkResult, err := r.Call(
 			gen.ProcessID{Name: sinkName, Node: r.Node().Name()},
 			PingRequest{Payload: req.Payload},
 		)
 		if err != nil {
+			endpoint.EndError(err)
 			return PongResponse{Payload: "forward sink error", Node: string(r.Node().Name())}, nil
 		}
 
@@ -113,6 +120,7 @@ func (r *relay) HandleCall(from gen.PID, ref gen.Ref, request any) (any, error) 
 		r.Send(gen.ProcessID{Name: sinkName, Node: r.Node().Name()},
 			MessageStatus{Service: "relay", Status: fmt.Sprintf("forwarded_%d_hops", len(req.Hops))})
 
+		endpoint.End()
 		return PongResponse{
 			Payload: fmt.Sprintf("forwarded(%v, hops=%d)", sinkResult, len(req.Hops)),
 			Node:    string(r.Node().Name()),
