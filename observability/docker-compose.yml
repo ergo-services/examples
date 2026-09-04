@@ -1,6 +1,6 @@
 services:
   etcd:
-    image: quay.io/coreos/etcd:v3.5.13
+    image: quay.io/coreos/etcd:v3.6.6
     container_name: etcd
     restart: unless-stopped
     command:
@@ -96,11 +96,10 @@ services:
     container_name: cluster-node1
     hostname: cluster-host1
     restart: unless-stopped
-    mem_limit: 128m
-    ports:
-      - "9922:9922"
+    mem_limit: 384m
     environment:
       - NODE_NAME=node1@cluster-host1
+      - GOMEMLIMIT=300MiB
     depends_on:
       etcd:
         condition: service_healthy
@@ -123,9 +122,10 @@ services:
     container_name: cluster-node2
     hostname: cluster-host2
     restart: unless-stopped
-    mem_limit: 128m
+    mem_limit: 384m
     environment:
       - NODE_NAME=node2@cluster-host2
+      - GOMEMLIMIT=300MiB
     depends_on:
       etcd:
         condition: service_healthy
@@ -148,9 +148,10 @@ services:
     container_name: cluster-node3
     hostname: cluster-host3
     restart: unless-stopped
-    mem_limit: 128m
+    mem_limit: 384m
     environment:
       - NODE_NAME=node3@cluster-host3
+      - GOMEMLIMIT=300MiB
     depends_on:
       etcd:
         condition: service_healthy
@@ -173,9 +174,10 @@ services:
     container_name: cluster-node4
     hostname: cluster-host4
     restart: unless-stopped
-    mem_limit: 128m
+    mem_limit: 384m
     environment:
       - NODE_NAME=node4@cluster-host4
+      - GOMEMLIMIT=300MiB
     depends_on:
       etcd:
         condition: service_healthy
@@ -198,9 +200,10 @@ services:
     container_name: cluster-node5
     hostname: cluster-host5
     restart: unless-stopped
-    mem_limit: 128m
+    mem_limit: 384m
     environment:
       - NODE_NAME=node5@cluster-host5
+      - GOMEMLIMIT=300MiB
     depends_on:
       etcd:
         condition: service_healthy
@@ -223,7 +226,7 @@ services:
     container_name: observer
     hostname: observer
     restart: unless-stopped
-    mem_limit: 64m
+    mem_limit: 192m
     ports:
       - "9911:9911"
     environment:

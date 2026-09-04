@@ -1,0 +1,4 @@
+ergo.services/ergo v1.999.330 h1:9reLfSUoaAmg1ITcdTGGhJ9UXawQW+xR9yeqHbjsddE=
+ergo.services/ergo v1.999.330/go.mod h1:2WcCdXUIZvCfy9Kkac3Sx6V/tB23Mx3yK6xz77hRfbM=
+ergo.services/proto/erlang23 v0.1.1 h1:NviPgd/53mHJPH1f4sWg6jg5xMYiRuoXvfEiNemdKlc=
+ergo.services/proto/erlang23 v0.1.1/go.mod h1:QX/vRL0t+vguL4YHfRZlITIOvDBxRzeJiZtd0P6cZrI=

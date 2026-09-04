@@ -12,7 +12,7 @@ Four observability layers provide full visibility:
 - **Grafana dashboards:** Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Three dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system), **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles), and **Ergo Tracing** (trace search with TraceQL filtering by node, behavior, message type, and any span attribute)
 - **Grafana Tempo:** Distributed tracing backend. Traces are exported from every node via the [Pulse](https://docs.ergo.services/extra-library/applications/pulse) OTLP/HTTP exporter. Explore traces in Grafana with full waterfall view across nodes.
 - **Observer web UI:** real-time process inspection, application trees, network topology, log streaming, and built-in tracing waterfall with sent/delivered/processed point visualization
-- **AI-powered diagnostics:** an MCP server on node1 exposes 48 tools to Claude Code (or any MCP-compatible AI client), turning it into an interactive SRE that investigates the cluster through natural language conversation
+- **AI-powered diagnostics:** the observer serves an MCP surface on the same port as its web UI, giving Claude Code (or any MCP-compatible AI client) 38 tools and the cluster as `ergo://` resources, and turning it into an interactive SRE that investigates the cluster through natural language conversation
 
 ## Scenario Applications
 
@@ -126,12 +126,11 @@ graph TB
 Each node runs the same set of applications:
 - `radar`: Prometheus metrics exporter (`/metrics`, `/health/live`, `/health/ready`)
 - `pulse`: OTLP/HTTP tracing exporter (sends spans to Tempo)
-- `mcp`: MCP server (node1 only exposes port 9922)
 - `latency_scenario`, `messaging_scenario`, `lifecycle_scenario`, `events_scenario`, `tracing_scenario`
 
-A separate `observer` node joins the cluster and provides a web UI on port 9911
-for real-time process inspection, application trees, network topology, log streaming,
-and tracing waterfall.
+A separate `observer` node joins the cluster and serves everything a human or an
+agent looks at on port 9911: the web UI at `/`, and the MCP surface at `/mcp`.
+Both see the whole cluster, not just the node the observer runs on.
 
 Nodes start sequentially via Docker healthcheck dependencies:
 node1 -> node2 -> node3 -> node4 -> node5.
@@ -150,7 +149,7 @@ make up
 |------------|----------------------------------------|
 | Dashboards | http://localhost:8888/dashboards        |
 | Observer   | http://localhost:9911                   |
-| MCP        | http://localhost:9922/mcp               |
+| MCP        | http://localhost:9911/mcp               |
 
 Open Grafana, navigate to the **Ergo Cluster** dashboard. Within a minute of startup,
 all panels will show live data: latency spikes, network bursts, process churn, and
@@ -223,14 +222,23 @@ In Observer, the tracing page shows the same data in real-time with color-coded 
 ## AI-Powered Cluster Diagnostics (MCP)
 
 Besides Grafana dashboards with historical metrics, this example demonstrates real-time
-interactive diagnostics via MCP (Model Context Protocol). The MCP application on node1
-exposes 48 tools covering processes, network, events, logging, debug profiling, and
-real-time samplers. Combined with the `devops` agent, Claude Code becomes an
-interactive SRE that investigates the cluster through conversation.
+interactive diagnostics via MCP (Model Context Protocol). The surface belongs to the
+observer: the same listener that serves the web UI on port 9911 serves `/mcp`, so there
+is one endpoint, one authorization model and one thing to run. Combined with the
+`devops` agent, Claude Code becomes an interactive SRE that investigates the cluster
+through conversation.
 
-The MCP server acts as a cluster proxy; every tool accepts an optional `node` parameter.
-When specified, the request is forwarded to the remote node via native Ergo inter-node
-protocol. One MCP endpoint provides access to all 5 nodes.
+It exposes 38 tools, of which 9 can change something (kill a process, tune it, start or
+stop an application, set a log level or a tracing sampler); the other 29 only read.
+Alongside them the observer publishes the cluster as resources: `ergo://cluster` names
+every node it knows, and each node has thirteen lenses addressed as
+`ergo://<node>/<lens>[/<target>]` - processes, process, network, connections,
+applications, events, log, tracing and the rest.
+
+One endpoint covers all five nodes. A tool that addresses a node takes a `node`
+argument and the request is forwarded over the native Ergo protocol; `cluster_query`
+and `cluster_batch` put one question to many nodes at once and answer with the URI of a
+run to read as results land.
 
 ### Setup
 
@@ -247,7 +255,7 @@ Wait until all 5 nodes are healthy (1-2 minutes).
 **Claude Code:**
 
 ```bash
-claude mcp add --transport http demo-cluster http://localhost:9922/mcp
+claude mcp add --transport http demo-cluster http://localhost:9911/mcp
 ```
 
 **Cursor:**
@@ -258,7 +266,7 @@ Add to `.cursor/mcp.json` (project-level) or `~/.cursor/mcp.json` (global):
 {
   "mcpServers": {
     "demo-cluster": {
-      "url": "http://localhost:9922/mcp"
+      "url": "http://localhost:9911/mcp"
     }
   }
 }
@@ -325,7 +333,7 @@ Helps spot unbalanced traffic or flapping connections.
 list all applications running on node3@cluster-host3
 ```
 
-Shows all 7 applications with their mode, uptime, and process counts.
+Shows every application with its mode, uptime, and process counts.
 
 ```
 compare memory usage across all nodes on demo-cluster

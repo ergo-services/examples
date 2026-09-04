@@ -103,7 +103,7 @@ func samplePayload(name gen.Atom, seq int) any {
 // ── gated producer: publishes only between MessageEventStart and MessageEventStop ──
 
 func factoryTemperatureSensor() gen.ProcessBehavior { return &gatedProducer{name: evTemperature} }
-func factoryChatRoom() gen.ProcessBehavior        { return &gatedProducer{name: evChat} }
+func factoryChatRoom() gen.ProcessBehavior          { return &gatedProducer{name: evChat} }
 
 type gatedProducer struct {
 	act.Actor

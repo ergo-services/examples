@@ -9,7 +9,6 @@ import (
 	"ergo.services/ergo/gen"
 	"ergo.services/ergo/lib"
 
-	"ergo.services/application/mcp"
 	"ergo.services/application/pulse"
 	"ergo.services/application/radar"
 	"ergo.services/logger/colored"
@@ -53,7 +52,6 @@ func main() {
 
 	options.Applications = []gen.ApplicationBehavior{
 		radar.CreateApp(radar.Options{Host: "0.0.0.0", Port: 9090}),
-		mcp.CreateApp(mcp.Options{}),
 		pulse.CreateApp(pulse.Options{
 			URL: "http://tempo:4318/v1/traces",
 		}),

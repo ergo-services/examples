@@ -25,7 +25,7 @@ up:
 	@echo ""
 	@echo "  Dashboards: http://localhost:8888/dashboards"
 	@echo "  Observer:   http://localhost:9911"
-	@echo "  MCP:        http://localhost:9922/mcp"
+	@echo "  MCP:        http://localhost:9911/mcp"
 	@echo ""
 	@echo "Use 'make logs' to see output."
 

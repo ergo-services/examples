@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	burstSize = 100
+	burstSize  = 100
 	startDelay = 5 * time.Second
 )
 

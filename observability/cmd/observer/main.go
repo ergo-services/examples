@@ -31,7 +31,12 @@ func main() {
 	options.Network.Registrar = registrar
 	options.Network.Cookie = "observability-cookie"
 
-	options.Log.DefaultLogger.Disable = true
+	// TEMPORARY: debug shows "session %s: inspect call %s took %s", which is how
+	// the subscribe timeouts get measured. Drop this line afterwards.
+	options.Log.Level = gen.LogLevelDebug
+	// TEMPORARY: the framework inspectors hard-code Log().SetLogger("default"),
+	// so disabling the default logger throws away every error they report.
+	options.Log.DefaultLogger.Disable = false
 	loggercolored, err := colored.CreateLogger(colored.Options{TimeFormat: time.DateTime})
 	if err != nil {
 		fmt.Printf("Failed to create colored logger: %v\n", err)
