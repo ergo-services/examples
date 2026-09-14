@@ -7,6 +7,10 @@ churn, a full spread of event utilization states, and distributed tracing across
 is not a quiet healthy cluster; it is a cluster that always has something worth investigating,
 so that every observability tool has meaningful data to work with.
 
+> **See it live.** This cluster runs as the demo at [ergo.observer](https://ergo.observer):
+> sign in and it is already there, under `demo/example`, read-only. Everything below
+> describes the same thing running on your own machine.
+
 Four observability layers provide full visibility:
 
 - **Grafana dashboards:** Prometheus metrics collected by the [Radar](https://docs.ergo.services/extra-library/applications/radar) application on each node. Three dashboards: **Ergo Cluster** (processes, mailbox latency, network, events, logging, system), **Slowweb HTTP Metrics** (custom application metrics with request rate, error rate, duration percentiles), and **Ergo Tracing** (trace search with TraceQL filtering by node, behavior, message type, and any span attribute)
@@ -172,6 +176,32 @@ make logs     # Follow logs from all containers
 make status   # Show container status
 make clean    # Remove containers, images, and volumes
 ```
+
+## Observer Configuration
+
+The observer reads four environment variables. All are empty by default, which is
+what `make up` uses: the bundle is served, every action is available, and
+everything sits at the root.
+
+| Variable | Effect |
+|----------|--------|
+| `OBSERVER_UI=off` | Stop serving the built-in bundle. For deployments where the interface arrives from elsewhere and only the API and SSE are wanted here. |
+| `OBSERVER_READONLY=1` | A read-only ceiling on the whole observer. A listener can be given less than the ceiling, never more, so nothing below can lift it. |
+| `OBSERVER_ORIGINS` | Comma-separated origins allowed to call this observer, for a bundle served from another address. |
+| `OBSERVER_PATH` | The prefix everything is served under -- the bundle, `/sse` and `/api` alike -- for a proxy that passes the path through rather than stripping it. |
+
+A public deployment usually wants them together:
+
+```yaml
+environment:
+  - OBSERVER_READONLY=1
+  - OBSERVER_UI=off
+  - OBSERVER_PATH=/observability
+  - OBSERVER_ORIGINS=https://ergo.observer
+```
+
+Without `OBSERVER_READONLY`, anyone who reaches the endpoint can kill processes on
+the cluster behind it.
 
 ## Distributed Tracing
 
