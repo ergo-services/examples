@@ -3,7 +3,7 @@ module observability
 go 1.26.0
 
 require (
-	ergo.services/application/observer v0.3.0
+	ergo.services/application/observer v0.3.1
 	ergo.services/application/pulse v0.1.3
 	ergo.services/application/radar v0.1.2
 	ergo.services/ergo v1.999.330
