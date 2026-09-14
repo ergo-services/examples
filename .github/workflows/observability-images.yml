@@ -7,7 +7,7 @@ name: observability images
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - 'observability/**'
       - '.github/workflows/observability-images.yml'
