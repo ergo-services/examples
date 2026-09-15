@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
 	"ergo.services/application/observer"
+	"ergo.services/application/radar"
 	"ergo.services/ergo"
 	"ergo.services/ergo/gen"
 	"ergo.services/logger/colored"
@@ -66,6 +68,16 @@ func main() {
 		listener.AllowedOrigins = strings.Split(origins, ",")
 	}
 
+	// how many SSE and MCP streams this observer holds at once, together. Default 64
+	if streams := os.Getenv("OBSERVER_MAX_STREAMS"); streams != "" {
+		n, err := strconv.Atoi(streams)
+		if err != nil || n < 1 {
+			fmt.Printf("Invalid OBSERVER_MAX_STREAMS %q\n", streams)
+			os.Exit(1)
+		}
+		listener.MaxStreams = n
+	}
+
 	opts := observer.Options{Listeners: []observer.Listener{listener}}
 
 	// On the whole observer, not the listener: a listener can be given less than the ceiling,
@@ -75,6 +87,10 @@ func main() {
 	}
 
 	options.Applications = []gen.ApplicationBehavior{
+		// the observer is a node of the cluster like any other, and Prometheus scrapes it
+		// here: without radar the one process everybody is watching through is the one
+		// nothing watches
+		radar.CreateApp(radar.Options{Host: "0.0.0.0", Port: 9090}),
 		observer.CreateApp(opts),
 	}
 

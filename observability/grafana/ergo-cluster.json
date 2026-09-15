@@ -2828,7 +2828,7 @@
       "panels": [
         {
           "id": 10,
-          "title": "Processes (total)",
+          "title": "Processes (Cluster Total)",
           "type": "timeseries",
           "gridPos": {
             "h": 8,
@@ -2838,6 +2838,10 @@
           },
           "targets": [
             {
+              "expr": "sum(ergo_processes_total{node=~\"$node\"})",
+              "legendFormat": "Cluster"
+            },
+            {
               "expr": "ergo_processes_total{node=~\"$node\"}",
               "legendFormat": "{{node}}"
             }
@@ -2845,21 +2849,70 @@
           "fieldConfig": {
             "defaults": {
               "custom": {
-                "lineInterpolation": "smooth"
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "fillOpacity": 35,
+                "stacking": {
+                  "mode": "normal",
+                  "group": "A"
+                }
               }
-            }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.showPoints",
+                    "value": "never"
+                  },
+                  {
+                    "id": "custom.stacking",
+                    "value": {
+                      "mode": "none"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "text"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "options": {
             "legend": {
               "displayMode": "table",
-              "placement": "right"
+              "placement": "right",
+              "calcs": [
+                "lastNotNull",
+                "max"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
             }
           },
-          "description": "Total process count per node over time. Steady growth without a plateau may indicate a process leak -- processes being spawned but never terminated. See https://docs.ergo.services/basics/process for process lifecycle."
+          "description": "Process count, one band per node stacked, so the height of the stack is the whole cluster. The legend and the tooltip give the cluster total and every node by name. Steady growth without a plateau may indicate a process leak -- processes being spawned but never terminated. See https://docs.ergo.services/basics/process for process lifecycle."
         },
         {
           "id": 11,
-          "title": "Processes (running)",
+          "title": "Running Processes (Cluster Total)",
           "type": "timeseries",
           "gridPos": {
             "h": 8,
@@ -2869,6 +2922,10 @@
           },
           "targets": [
             {
+              "expr": "sum(ergo_processes_running{node=~\"$node\"})",
+              "legendFormat": "Cluster"
+            },
+            {
               "expr": "ergo_processes_running{node=~\"$node\"}",
               "legendFormat": "{{node}}"
             }
@@ -2876,17 +2933,66 @@
           "fieldConfig": {
             "defaults": {
               "custom": {
-                "lineInterpolation": "smooth"
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "fillOpacity": 35,
+                "stacking": {
+                  "mode": "normal",
+                  "group": "A"
+                }
               }
-            }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.fillOpacity",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.showPoints",
+                    "value": "never"
+                  },
+                  {
+                    "id": "custom.stacking",
+                    "value": {
+                      "mode": "none"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "text"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "options": {
             "legend": {
               "displayMode": "table",
-              "placement": "right"
+              "placement": "right",
+              "calcs": [
+                "lastNotNull",
+                "max"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
             }
           },
-          "description": "Running process count per node. Helps identify load distribution across the cluster. Uneven running counts may point to hotspot nodes that need rebalancing."
+          "description": "Processes executing a callback right now, one band per node stacked, so the height of the stack is the whole cluster. The legend and the tooltip give the cluster total and every node by name. Bands of uneven thickness point to hotspot nodes that need rebalancing."
         },
         {
           "id": 14,
