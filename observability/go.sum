@@ -2,6 +2,8 @@ ergo.services/actor/health v0.1.0 h1:CP/g6B4BeGFKNKwQ72oUWJvUDTCsS54ml3tbWgxNRuY
 ergo.services/actor/health v0.1.0/go.mod h1:yXKZ2Y7fGLpMb0bPzavLoAKXOJrzRmDDY8zSZCi2qIE=
 ergo.services/actor/metrics v0.3.0 h1:9f9AYwFvH2jPm70dzDw/t8AftUfvXasiGkZx3awtczk=
 ergo.services/actor/metrics v0.3.0/go.mod h1:OLXYtvyYe/maoI8+APdJMeHhGvlwU39oamAVt92RDU4=
+ergo.services/actor/metrics v0.3.2 h1:7HnV/ckM1Vah8I8VfV0bZjKC7xXO/2RvOgY8okxdvS0=
+ergo.services/actor/metrics v0.3.2/go.mod h1:OLXYtvyYe/maoI8+APdJMeHhGvlwU39oamAVt92RDU4=
 ergo.services/application/observer v0.3.1 h1:xEXqFjw11x6umeBd+2s9rGrn/s7Uo/hJG4oXypTnyqw=
 ergo.services/application/observer v0.3.1/go.mod h1:SV9VqcCskfy3sxU3jvCqfu7pe4ThgYRXFuZ56C3Yct0=
 ergo.services/application/pulse v0.1.3 h1:RVW2K6hdSbdDjE/gO4eugYWZV/JKig/HZ9A54ammEZs=

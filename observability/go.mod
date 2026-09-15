@@ -13,7 +13,7 @@ require (
 
 require (
 	ergo.services/actor/health v0.1.0 // indirect
-	ergo.services/actor/metrics v0.3.0 // indirect
+	ergo.services/actor/metrics v0.3.2 // indirect
 	ergo.services/meta/sse v0.3.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
